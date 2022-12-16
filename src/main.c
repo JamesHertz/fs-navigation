@@ -10,6 +10,8 @@ FILE * open_config_file(){
     char * home_dir = getenv(HOME);
     char * file_full_name = "file.txt"; // config file full name
 
+    //asprintf(&file_full_name, "%s/%s", home_dir, CONFIG_FILE_NAME);
+
     printf("file-name: %s\n", file_full_name);
 
     FILE * file = fopen(file_full_name, "r+");
