@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 #include "records.h"
 
@@ -11,9 +10,9 @@
 
 void get(int argc, char * argv[]){
     if(argc == 0){
-        //printf("error running get-command\n");
-        //printf("should provide: <record-name>\n");
-        printf(ERROR);
+        printf("error running get-command\n");
+        printf("should provide: <record-name>\n");
+        //printf(ERROR);
         return;
     }
 
@@ -27,13 +26,14 @@ void get(int argc, char * argv[]){
 
 void set(int argc, char * argv[]){
     if(argc < 2){
-        //printf("error running set-command\n");
-        //printf("should provide: <record-name> <record-path>\n");
-        printf(ERROR);
+        printf("error running set-command\n");
+        printf("should provide: <record-name> <record-path>\n");
+        //printf(ERROR);
         return;
     }
     // TODO: check if the path exists
     create_record(argv[0], argv[1]);
+    printf("adding entry(%s, %s)...\n", argv[0], argv[1]);
 }
 
 void help(){
@@ -61,6 +61,7 @@ int main(int argc, char * argv[]){
     else if(!strcmp(cmd, SET))
         set(new_argc, new_argv);
     else {
+        // TODO some changes...
         printf("Unknown command: %s\n", cmd);
         printf("Run: <program> help - to get the list of all commands\n");
     }

@@ -1,12 +1,13 @@
-#include "records.h"
 #include <stdio.h>
+#include <stdlib.h>
 #include <errno.h>
+#include "records.h"
 
 #define HOME "HOME"
 // where our little database will be stored
 #define CONFIG_FILE_NAME ".fs-nav"
 
-static FILE * config_file;
+//static FILE * db_file; // little database
 
 
 // when the file it's open don't open it again :)
@@ -33,5 +34,5 @@ record get_record(char * name){
 
 
 void create_record(char * name, char * path){
-    // do something
+
 }
