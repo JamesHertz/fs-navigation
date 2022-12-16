@@ -6,6 +6,10 @@
 - [ ] define the data-base format
 - [ ] complete the code
 
+# other plans
+
+- [ ] add warning when we are overrring a dir
+- [ ] check if dir exists
 ---
 # Reminders
 
