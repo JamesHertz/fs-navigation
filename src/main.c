@@ -7,12 +7,33 @@
 #define SET "set"
 #define HELP "help"
 
+#define ERROR "null"
+
 void get(int argc, char * argv[]){
-    printf("running get\n");
+    if(argc == 0){
+        //printf("error running get-command\n");
+        //printf("should provide: <record-name>\n");
+        printf(ERROR);
+        return;
+    }
+
+    record r = get_record(argv[0]);
+    if(r != NULL)
+        printf("%s", r->path);
+    else
+        printf(ERROR);
+
 }
 
 void set(int argc, char * argv[]){
-    printf("running set\n");
+    if(argc < 2){
+        //printf("error running set-command\n");
+        //printf("should provide: <record-name> <record-path>\n");
+        printf(ERROR);
+        return;
+    }
+    // TODO: check if the path exists
+    create_record(argv[0], argv[1]);
 }
 
 void help(){
