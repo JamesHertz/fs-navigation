@@ -9,5 +9,4 @@ typedef struct __record__ {
 record get_record(char * name);
 void create_record(char * name, char * path);
 
-void print_records();
 #endif

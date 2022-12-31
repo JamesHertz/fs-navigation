@@ -52,8 +52,7 @@ int main(int argc, char * argv[]){
         } 
     }
 
-    //if(!strcmp("", cmd) || !strcmp(HELP, cmd)) help();
-    if(!strcmp("", cmd)) print_records();
+    if(!strcmp("", cmd) || !strcmp(HELP, cmd)) help();
     else if(!strcmp(cmd, GET))
         get(new_argc, new_argv);
     else if(!strcmp(cmd, SET))

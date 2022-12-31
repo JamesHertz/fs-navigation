@@ -13,17 +13,19 @@ static char * file_name = NULL;
 
 static FILE * open_config_file(){
 
-    if(cfg_file != NULL){
+    if(cfg_file == NULL){
       //  char * home_dir = getenv(HOME);
         char * file_full_name = "file.txt"; // config file full name
 
-        //asprintf(&file_full_name, "%s/%s", home_dir, CONFIG_FILE_NAME);
+        // asprintf(&file_full_name, "%s/%s", home_dir, CONFIG_FILE_NAME);
 
-        printf("file-name: %s\n", file_full_name);
+        // printf("file-name: %s\n", file_full_name);
 
         FILE * file = fopen(file_full_name, "r+");
         if(file == NULL && errno == ENOENT)
             file = fopen(file_full_name, "w+"); // create's the file
+
+        cfg_file = file;
     }
    
     // TODO: think if it's really worthed worring about the weird error :(    
@@ -36,11 +38,11 @@ static void close_cfg_file(){
 }
 
 typedef struct __lnode {
-    record * rec;
+    record rec;
     struct __lnode * next;     
 } * lnode; 
 
-static lnode new_lnode(record * rec, lnode next){
+static lnode new_lnode(record rec, lnode next){
     lnode node = malloc(sizeof(struct __lnode));
     node->rec = rec;
     node->next = next;
@@ -61,8 +63,8 @@ static lnode upload_records(){
     lnode curr = &dummy;
 
     char * line = NULL;
-    size_t size = 0, len;
-    while((len = getline(&line, &size, file)) > 0){
+    size_t size = 0;
+    while(getline(&line, &size, file) > 0){
         char * rec_name = strtok(line, " \t");
         char * rec_path = strtok(NULL, "\n");
         record rec = new_record(
@@ -78,18 +80,18 @@ static lnode upload_records(){
 
 
 record get_record(char * name){
+    lnode node = upload_records();
+
+    while(node != NULL){
+        record rec = node->rec;
+        if(!strcmp(rec->name, name))
+            return rec->path;
+        node = node->next;
+    }
+
     return NULL;
 }
 
 void create_record(char * name, char * path){
 
-}
-
-void print_records(){
-    lnode node = upload_records();
-
-    while(node != NULL){
-        record rec = node->rec;
-        printf("name: %s; path: %s\n", rec->name, rec->path);
-    }
 }
