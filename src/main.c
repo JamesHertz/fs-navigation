@@ -12,7 +12,6 @@ void get(int argc, char * argv[]){
     if(argc == 0){
         printf("error running get-command\n");
         printf("should provide: <record-name>\n");
-        //printf(ERROR);
         return;
     }
 
@@ -28,12 +27,9 @@ void set(int argc, char * argv[]){
     if(argc < 2){
         printf("error running set-command\n");
         printf("should provide: <record-name> <record-path>\n");
-        //printf(ERROR);
         return;
     }
-    // TODO: check if the path exists
     create_record(argv[0], argv[1]);
-    printf("adding entry(%s, %s)...\n", argv[0], argv[1]);
 }
 
 void help(){
@@ -41,6 +37,7 @@ void help(){
 }
 
 int main(int argc, char * argv[]){
+
 
     char * cmd = "";
     char ** new_argv = NULL;
@@ -55,7 +52,8 @@ int main(int argc, char * argv[]){
         } 
     }
 
-    if(!strcmp("", cmd) || !strcmp(HELP, cmd)) help();
+    //if(!strcmp("", cmd) || !strcmp(HELP, cmd)) help();
+    if(!strcmp("", cmd)) print_records();
     else if(!strcmp(cmd, GET))
         get(new_argc, new_argv);
     else if(!strcmp(cmd, SET))
