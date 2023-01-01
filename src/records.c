@@ -2,13 +2,19 @@
 #include <stdlib.h>
 #include <errno.h>
 #include <string.h>
+#include <unistd.h>
 #include "records.h"
 
 #define HOME "HOME"
 #define CONFIG_FILE_NAME ".fs-nav"
 
+typedef struct __lnode {
+    record rec;
+    struct __lnode * next;     
+} * lnode; 
 
 static FILE * cfg_file = NULL;
+static lnode records = NULL;
 
 static FILE * get_config_file(){
 
@@ -30,11 +36,6 @@ static FILE * get_config_file(){
     return cfg_file;
 }
 
-typedef struct __lnode {
-    record rec;
-    struct __lnode * next;     
-} * lnode; 
-
 static lnode new_lnode(record rec, lnode next){
     lnode node = malloc(sizeof(struct __lnode));
     node->rec = rec;
@@ -50,6 +51,7 @@ static record new_record(char * name, char * path){
 }
 
 static lnode upload_records(){
+    if(records != NULL) return records;
     FILE * file = get_config_file();
 
     struct __lnode dummy = {.next = NULL};
@@ -68,12 +70,22 @@ static lnode upload_records(){
     }
 
     if(line != NULL) free(line);
-
-    return dummy.next;
+//    records = dummy.next;
+//    return recrods;
+    return (records = dummy.next);
 }
 
 void store_records(lnode records){
-    // TODO: how to trunk the file content??
+    FILE * f = get_config_file();
+    fseek(f, 0, SEEK_SET);
+    ftruncate(fileno(f) , 0);
+
+    lnode curr = records;
+
+    while(curr != NULL){
+        record rec = curr->rec;
+        fprintf(f, "%s %s\n", rec->name, rec->path);
+    }
 }
 
 void close_cfg_file(){
@@ -103,7 +115,8 @@ void create_record(char * name, char * path){
     record rec = get_record(name);
     if(rec == NULL) {
         FILE * file = get_config_file();
-        fseek(file, SEEK_END, 0);
+        // TODO: what if it's not ended by a new line?
+        fseek(file, 0, SEEK_END);
         fprintf(file, "%s %s\n", name, path);
     }else{
         free(rec->path);
