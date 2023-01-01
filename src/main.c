@@ -57,7 +57,7 @@ int main(int argc, char * argv[]){
 
     cmd_func func;
 
-    if(strcmp("", cmd))
+    if(!strcmp("", cmd))
         func = help;
     else
         func = get_func(cmd);
