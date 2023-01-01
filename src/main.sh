@@ -13,7 +13,7 @@ function fs(){
 
         set)
             if [ $# -lt 2 ]; then
-                echo "invalid call to set: missing <name> <path>"
+                echo "invalid call to set missing: <name> <path>"
                 return 1
             fi
 
