@@ -5,22 +5,21 @@
 #include <unistd.h>
 #include "records.h"
 
-#define HOME "HOME"
+// #define HOME "HOME"
+#define HOME "TEST_DIR"
 #define CONFIG_FILE_NAME ".fs-nav"
 
-typedef struct __lnode {
+struct __lnode {
     record rec;
     struct __lnode * next;     
-} * lnode; 
+}; 
 
 static FILE * cfg_file = NULL;
-static lnode records = NULL;
 
 static FILE * get_config_file(){
 
     if(cfg_file == NULL){
-        //char * home_dir = getenv(HOME);
-        char * home_dir = getenv("TEST_DIR");
+        char * home_dir = getenv(HOME);
         char * file_full_name = NULL; // config file full name
 
         asprintf(&file_full_name, "%s/%s", home_dir, CONFIG_FILE_NAME);
@@ -51,28 +50,31 @@ static record new_record(char * name, char * path){
 }
 
 static lnode upload_records(){
-    if(records != NULL) return records;
-    FILE * file = get_config_file();
+    static lnode records = NULL; 
 
-    struct __lnode dummy = {.next = NULL};
-    lnode curr = &dummy;
+    if(records != NULL) {
 
-    char * line = NULL;
-    size_t size = 0;
-    while(getline(&line, &size, file) > 0){
-        char * rec_name = strtok(line, " \t");
-        char * rec_path = strtok(NULL, "\n");
-        record rec = new_record(
-            strdup(rec_name),
-            strdup(rec_path)
-        );
-        curr = curr->next = new_lnode(rec, NULL);
+        FILE * file = get_config_file();
+        struct __lnode dummy = {.next = NULL};
+        lnode curr = &dummy;
+
+        char * line = NULL;
+        size_t size = 0;
+        while(getline(&line, &size, file) > 0){
+            char * rec_name = strtok(line, " \t");
+            char * rec_path = strtok(NULL, "\n");
+            record rec = new_record(
+                strdup(rec_name),
+                strdup(rec_path)
+            );
+            curr = curr->next = new_lnode(rec, NULL);
+        }
+
+        if(line != NULL) free(line);
+        records = dummy.next;
     }
 
-    if(line != NULL) free(line);
-//    records = dummy.next;
-//    return recrods;
-    return (records = dummy.next);
+    return records;
 }
 
 void store_records(lnode records){
@@ -115,7 +117,6 @@ void create_record(char * name, char * path){
     record rec = get_record(name);
     if(rec == NULL) {
         FILE * file = get_config_file();
-        // TODO: what if it's not ended by a new line?
         fseek(file, 0, SEEK_END);
         fprintf(file, "%s %s\n", name, path);
     }else{
@@ -125,4 +126,23 @@ void create_record(char * name, char * path){
     }
     close_cfg_file();
 
+}
+
+
+// iterator part of program 
+
+lnode get_records_iterator(){
+    return upload_records(); 
+}
+
+lnode it_next(lnode node){
+    return node->next;
+}
+
+bool it_has_next(lnode node){
+    return (node && node->next);
+}
+
+record it_node_record(lnode node){
+    return node->rec;
 }
