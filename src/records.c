@@ -9,6 +9,10 @@
 #define HOME "TEST_DIR"
 #define CONFIG_FILE_NAME ".fs-nav"
 
+#define REC_SEP  "\t"
+#define REC_LINE_FORMAT "%s" REC_SEP "%s\n"
+
+
 struct __lnode {
     record rec;
     struct __lnode * next;     
@@ -61,7 +65,7 @@ static lnode upload_records(){
         char * line = NULL;
         size_t size = 0;
         while(getline(&line, &size, file) > 0){
-            char * rec_name = strtok(line, " \t");
+            char * rec_name = strtok(line, REC_SEP);
             char * rec_path = strtok(NULL, "\n");
             record rec = new_record(
                 strdup(rec_name),
@@ -86,7 +90,8 @@ void store_records(lnode records){
 
     while(curr != NULL){
         record rec = curr->rec;
-        fprintf(f, "%s %s\n", rec->name, rec->path);
+        fprintf(f, REC_LINE_FORMAT, rec->name, rec->path);
+        curr = curr->next;
     }
 }
 
@@ -107,7 +112,6 @@ record get_record(char * name){
         node = node->next;
     }
 
-
     close_cfg_file();
     return NULL;
 }
@@ -118,7 +122,7 @@ void create_record(char * name, char * path){
     if(rec == NULL) {
         FILE * file = get_config_file();
         fseek(file, 0, SEEK_END);
-        fprintf(file, "%s %s\n", name, path);
+        fprintf(file, REC_LINE_FORMAT, name, path);
     }else{
         free(rec->path);
         rec->path = strdup(path);

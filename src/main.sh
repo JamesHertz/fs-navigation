@@ -8,7 +8,12 @@ function fs(){
             echo "commands: " 
             echo "    -> set <entry-name> <path> - set's <entry-name> path to <path>"
             echo "    -> get <entry-name> - moves to the path of <entry-name> if such exists"
+            echo "    -> list - list all record entries stored"
             echo "    -> help - prints help message"
+        ;;
+
+        list)
+            $FS_DB list
         ;;
 
         set)
