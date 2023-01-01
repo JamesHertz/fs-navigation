@@ -9,7 +9,6 @@ EXE := $(BIN_DIR)/main
 SRC := $(wildcard $(SRC_DIR)/*.h) # takes all the file .h
 OBJ := $(SRC:$(SRC_DIR)/%.h=$(OBJ_DIR)/%.o) $(SRC_DIR)/main.c # turns the texts .h to to .o
 
-
 .PHONY: clean 
 
 all: $(EXE)
