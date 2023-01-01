@@ -1,4 +1,5 @@
-FS_DB=bin/main
+export TEST_DIR=$PWD # for testing reasons :)
+FS_DB=$TEST_DIR/bin/main
 
 function fs(){
     case $1 in
