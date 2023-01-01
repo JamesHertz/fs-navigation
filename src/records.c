@@ -52,7 +52,7 @@ static record new_record(char * name, char * path){
 static lnode upload_records(){
     static lnode records = NULL; 
 
-    if(records != NULL) {
+    if(records == NULL) {
 
         FILE * file = get_config_file();
         struct __lnode dummy = {.next = NULL};
@@ -137,10 +137,6 @@ lnode get_records_iterator(){
 
 lnode it_next(lnode node){
     return node->next;
-}
-
-bool it_has_next(lnode node){
-    return (node && node->next);
 }
 
 record it_node_record(lnode node){

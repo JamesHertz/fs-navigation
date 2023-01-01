@@ -37,7 +37,8 @@ void list(int argc, char * argv[]){
 
     lnode it = get_records_iterator();
 
-    while(it_has_next(it)){
+    if(it == NULL) printf("it's null :(\n");
+    while(it != NULL){
         record rec = it_node_record(it);
         printf("%s - %s\n",rec->name, rec->path);
         it = it_next(it);
@@ -48,8 +49,8 @@ void list(int argc, char * argv[]){
 #define N_COMMANDS (sizeof(commands) / sizeof(commands[0]))
 
 static command commands[] = {
-    {.name = "get", .func = get   },
-    {.name = "set", .func = set   },
+    {.name = "get",  .func = get  },
+    {.name = "set",  .func = set  },
     {.name = "list", .func = list },
     {.name = "help", .func = help }
 };
