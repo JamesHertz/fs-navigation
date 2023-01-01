@@ -103,6 +103,7 @@ void create_record(char * name, char * path){
     record rec = get_record(name);
     if(rec == NULL) {
         FILE * file = get_config_file();
+        fseek(file, SEEK_END, 0);
         fprintf(file, "%s %s\n", name, path);
     }else{
         free(rec->path);

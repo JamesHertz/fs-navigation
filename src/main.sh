@@ -2,7 +2,15 @@ export TEST_DIR=$PWD # for testing reasons :)
 FS_DB=$TEST_DIR/bin/main
 
 function fs(){
+
     case $1 in
+        ''|help)
+            echo "commands: " 
+            echo "    -> set <entry-name> <path> - set's <entry-name> path to <path>"
+            echo "    -> get <entry-name> - moves to the path of <entry-name> if such exists"
+            echo "    -> help - prints help message"
+        ;;
+
         set)
             if [ $# -lt 2 ]; then
                 echo "invalid call to set: missing <name> <path>"
@@ -12,10 +20,16 @@ function fs(){
             local path
             if [ $# -eq 2 ] ; then
                 path=$PWD
-            else
+            elif [[ $3 =~ ^/ ]]; then
                 path=$3
+            else
+                path=$PWD/$3
             fi
 
+            if ! [[ -e $path && -d $path ]]; then
+                echo "invalid path: $path"
+                return 1
+            fi
             $FS_DB set $2 $path
         ;;
 
