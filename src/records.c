@@ -5,12 +5,12 @@
 #include "records.h"
 
 #define HOME "HOME"
-// where our little database will be stored
 #define CONFIG_FILE_NAME ".fs-nav"
+
 
 static FILE * cfg_file = NULL;
 
-static FILE * open_config_file(){
+static FILE * get_config_file(){
 
     if(cfg_file == NULL){
         //char * home_dir = getenv(HOME);
@@ -27,8 +27,6 @@ static FILE * open_config_file(){
         cfg_file = file;
     }
    
-    // TODO: think if it's really worthed worring about the weird error :(    
-    // free(file_full_name);
     return cfg_file;
 }
 
@@ -52,7 +50,7 @@ static record new_record(char * name, char * path){
 }
 
 static lnode upload_records(){
-    FILE * file = open_config_file();
+    FILE * file = get_config_file();
 
     struct __lnode dummy = {.next = NULL};
     lnode curr = &dummy;
@@ -71,10 +69,19 @@ static lnode upload_records(){
 
     if(line != NULL) free(line);
 
-    fclose(file);
     return dummy.next;
 }
 
+void store_records(lnode records){
+    // TODO: how to trunk the file content??
+}
+
+void close_cfg_file(){
+    if(cfg_file != NULL) {
+        fclose(cfg_file);
+        cfg_file = NULL;
+    }
+}
 
 record get_record(char * name){
     lnode node = upload_records();
@@ -86,10 +93,22 @@ record get_record(char * name){
         node = node->next;
     }
 
+
+    close_cfg_file();
     return NULL;
 }
 
-
 void create_record(char * name, char * path){
     lnode records = upload_records();  
+    record rec = get_record(name);
+    if(rec == NULL) {
+        FILE * file = get_config_file();
+        fprintf(file, "%s %s\n", name, path);
+    }else{
+        free(rec->path);
+        rec->path = strdup(path);
+        store_records(records);
+    }
+    close_cfg_file();
+
 }
