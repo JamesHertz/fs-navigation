@@ -5,8 +5,7 @@
 #include <unistd.h>
 #include "records.h"
 
-// #define HOME "HOME"
-#define HOME "TEST_DIR"
+#define HOME "HOME"
 #define CONFIG_FILE_NAME ".fs-nav"
 
 #define REC_SEP  "\t"

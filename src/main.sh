@@ -8,6 +8,7 @@ function fs(){
             echo "commands: " 
             echo "    -> set <entry-name> <path> - set's <entry-name> path to <path>"
             echo "    -> get <entry-name> - moves to the path of <entry-name> if such exists"
+            echo "    -> <entry-name> - does same as get <entry-name>"
             echo "    -> list - list all record entries stored"
             echo "    -> help - prints help message"
         ;;
