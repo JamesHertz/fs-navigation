@@ -1,23 +1,27 @@
 #ifndef __RECORD__
 #define __RECORD__
 
-typedef struct __record__ {
+#include <stdbool.h>
+
+typedef struct {
     char * name;
     char * path;
-} * record;
+} record;
 
-typedef struct __lnode * lnode;
+typedef struct _llist {
+    record record;
+    struct _llist * next;
+} llist;
 
-record get_record(char * name);
-void create_record(char * name, char * path);
+typedef struct {
+    llist * records;
+    FILE * storage;
+} RecordsManager;
 
-// iterator for the records
-lnode get_records_iterator();
+RecordsManager * load_records();
 
-// prec: node != NULL
-lnode it_next (lnode node);
+record * get_record(RecordsManager * m, char * name);
 
-// prec: node != NULL
-record it_node_record(lnode node);
+void create_record(RecordsManager * m, char * name, char * path);
 
 #endif
