@@ -32,4 +32,6 @@ record * get_record(const RecordsManager * m, char * name);
 
 char * create_record(RecordsManager * m, char * name, char * path);
 
+void close_storage(RecordsManager * m);
+
 #endif

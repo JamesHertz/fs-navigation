@@ -79,8 +79,6 @@ void save_records(RecordsManager *m){
         fprintf(storage, REC_LINE_FORMAT, r.name, r.path);
     }
 
-    // TODO: think about this...
-    fclose(storage);
 }
 
 record * get_record(const RecordsManager *m, char * name){
@@ -116,4 +114,8 @@ char * create_record(RecordsManager *m, char * name, char * path){
     }
 
     return old_rec_path;
+}
+
+void close_storage(RecordsManager * m){
+    fclose(m->storage);
 }

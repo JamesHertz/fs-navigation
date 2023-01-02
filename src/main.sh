@@ -5,12 +5,12 @@ function fs(){
 
     case $1 in
         ''|help)
-            echo "commands: " 
-            echo "    -> set <entry-name> <path> - set's <entry-name> path to <path>"
-            echo "    -> get <entry-name> - moves to the path of <entry-name> if such exists"
-            echo "    -> <entry-name> - alias for get <entry-name>"
-            echo "    -> list - list all record entries stored"
-            echo "    -> help - prints help message"
+            echo "fs=commands: " 
+            echo "    * set <name> <path> - set's <name> path to <path>"
+            echo "    * get <name>        - moves to the path of <name> if such exists"
+            echo "    * <name>            - alias for get <name>"
+            echo "    * list              - list all record entries stored"
+            echo "    * help              - prints help message"
         ;;
 
         list)

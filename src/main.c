@@ -28,8 +28,6 @@ int main(int argc, char * argv[]){
         .commands = cmds,
     };
 
-    manager = load_records();
-
     char * cmd = "";
     char ** new_argv = NULL;
     int new_argc = 0;
@@ -45,13 +43,16 @@ int main(int argc, char * argv[]){
 
     cmd_func func = (*cmd == '\0') ? help : get_func(&cmd_store, cmd);
 
-    if(func != NULL)
+    if(func != NULL){
+        manager = load_records();
         func(new_argc, new_argv);
-    else {
+        close_storage(manager);
+    }else {
         // TODO some changes...
         printf("Unknown command: %s\n", cmd);
         printf("Run: <program> help - to get the list of all commands\n");
     }
+
     return 0;
 }
 
