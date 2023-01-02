@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include "records.h"
 #include "commands.h"
@@ -84,6 +85,29 @@ void help(int argc, char ** argv){
 
 void list(int argc, char ** argv){
 
-    //printf("%s - %s\n",rec->name, rec->path);
+    // get's the max lenght of the records name
+    // pretty prints
+    lnode * curr = manager->records.head;
+    int max = -1;
+
+    while(curr != NULL){
+        int lenght = strlen(curr->record.name);
+        if(lenght > max) max = lenght;
+        curr = curr->next;
+    }
+    
+
+    if(max != -1){
+        char * format = NULL;
+        asprintf(&format, "%%-%ds => %%s\n", max);
+        curr = manager->records.head;
+        while(curr != NULL){
+            record rec = curr->record;
+            printf(format, rec.name, rec.path);
+            curr = curr->next;
+        }
+
+        free(format);
+    }
 
 }
