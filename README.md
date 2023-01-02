@@ -2,7 +2,9 @@
  I really like to use alias to move between my directory tree, but adding an alias isn't as comfortable as I wanted it to be. So I decided that would allow me to move between my directories fast and in a very confortable way. I also plan to add new functionatlities to what a simple alias can do.
 
 ## TODO:
+
 - [ ] write a simple deployment method as the one I am using now
+- [ ] add a remove command
 
 ---
 # Reminders
