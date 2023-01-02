@@ -8,20 +8,28 @@ typedef struct {
     char * path;
 } record;
 
-typedef struct _llist {
+typedef struct _lnode{
     record record;
-    struct _llist * next;
+    struct _lnode* next;
+} lnode;
+
+typedef struct {
+    lnode * head;
+    lnode * tail;
+    size_t size;
 } llist;
 
 typedef struct {
-    llist * records;
+    llist  records;
     FILE * storage;
 } RecordsManager;
 
 RecordsManager * load_records();
 
-record * get_record(RecordsManager * m, char * name);
+void save_records(RecordsManager * m);
 
-void create_record(RecordsManager * m, char * name, char * path);
+record * get_record(const RecordsManager * m, char * name);
+
+char * create_record(RecordsManager * m, char * name, char * path);
 
 #endif

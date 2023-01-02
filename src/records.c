@@ -26,81 +26,94 @@ static FILE * get_config_file(){
     return file;
 }
 
+static lnode * create_node(char * name, char * path, lnode * next){
+    record rec = {
+        .name = strdup(name),
+        .path = strdup(path)
+    };
+
+    lnode * node = malloc(sizeof(lnode));
+    node->record = rec;
+    return node;
+}
+
 RecordsManager * load_records(){
     static RecordsManager * manager = NULL;
 
     if(manager == NULL){
         FILE * storage = get_config_file(); 
 
-        llist dummy = {.next = NULL};
-        llist * curr = &dummy;
+        size_t size = 0;
+        lnode dummy = {.next = NULL};
+        lnode * curr = &dummy;
 
         // uplods the records :)
         char * line = NULL;
-        size_t size = 0;
         while(getline(&line, &size, storage) > 0){
             char * rec_name = strtok(line, REC_SEP);
             char * rec_path = strtok(NULL, "\n");
-            record rec = {
-                .name = strdup(rec_name),
-                .path = strdup(rec_path)
-            };
-
-            llist * next = malloc(sizeof(llist));
-            next->record = rec;
-            next->next = NULL;
-
-            curr = curr->next = next;
+            curr = curr->next = create_node(rec_name, rec_path, NULL);
+            ++size;
         }
 
         if(line != NULL) free(line);
 
         manager = malloc(sizeof(RecordsManager));
-        manager->records = dummy.next;
         manager->storage = storage;
+        manager->records = (llist) {
+            .head = dummy.next,
+            .tail = (size == 0) ? NULL : curr,
+            .size = size
+        };
     }
 
     return manager;
 }
 
-//void save_records(RecordsManager * m){
-//    FILE * st = m->storage;
-//    fseek(st, 0, SEEK_SET);
-//    ftruncate(fileno(st) , 0);
-//
-//    llist *  curr = m->records;
-//
-//    while(curr != NULL){
-//        record rec = curr->rec;
-//        fprintf(f, REC_LINE_FORMAT, rec->name, rec->path);
-//        curr = curr->next;
-//    }
-//}
+void save_records(RecordsManager *m){
+    FILE * storage = m->storage;
+    ftruncate(fileno(storage), 0);
+    lnode * curr = m->records.head;
+    while (curr != NULL){
+        record r = curr->record;
+        fprintf(storage, REC_LINE_FORMAT, r.name, r.path);
+    }
 
-record * get_record(RecordsManager *m, char * name){
-    llist * curr = m->records;
+    // TODO: think about this...
+    fclose(storage);
+}
+
+record * get_record(const RecordsManager *m, char * name){
+    lnode * curr = m->records.head;
 
     while(curr != NULL){
-        record rec = curr->record;
-        if(!strcmp(rec.name, name))
-            return &rec;
+        record * rec = &curr->record;
+        if(!strcmp(rec->name, name))
+            return rec;
         curr = curr->next;
     }
 
     return NULL;
 }
 
-void create_record(RecordManager *m, char * name, char * path){
+char * create_record(RecordsManager *m, char * name, char * path){
     record * rec = get_record(m, name);
+    char * old_rec_path = NULL;
     if(rec == NULL) {
-//        FILE * file = get_config_file();
-//        fseek(file, 0, SEEK_END);
-//        fprintf(file, REC_LINE_FORMAT, name, path);
+        llist * list = &m->records;
+        lnode * new_node = create_node(name, path, NULL);
+
+        if(list->size == 0)
+            list->head = new_node;
+        else
+            list->tail->next = new_node;
+
+        list->tail = new_node;
+        list->size += 1;
     }else{
-//        free(rec->path);
-//        rec->path = strdup(path);
-//        store_records(records);
+        old_rec_path = rec->path;
+        rec->path = strdup(path);
     }
 
-    return NULL;
+    return old_rec_path;
 }

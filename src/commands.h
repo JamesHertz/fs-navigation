@@ -8,6 +8,12 @@ typedef struct {
     cmd_func func;
 } command;
 
-cmd_func get_func(char * c_name);
+typedef struct {
+    command * commands;
+    size_t count;
+} commands;
+
+cmd_func get_func(commands * cmds, char * c_name);
+
 
 #endif
