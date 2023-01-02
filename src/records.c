@@ -27,8 +27,6 @@ static FILE * get_config_file(){
 }
 
 static lnode * create_node(char * name, char * path, lnode * next){
-    printf("name = %s\n", name);
-    printf("path = %s\n", path);
     record rec = {
         .name = strdup(name),
         .path = strdup(path)
@@ -52,12 +50,14 @@ RecordsManager * load_records(){
         // uplods the records :)
         char * line = NULL;
         size_t line_size = 0;
+
+        // TODO: check the reasons why this thing can fail :)
         while(getline(&line, &line_size, storage) > 0){
             printf("line=%s\n", line);
-      //      char * rec_name = strtok(line, REC_SEP);
-      //      char * rec_path = strtok(NULL, "\n");
-      //      curr = curr->next = create_node(rec_name, rec_path, NULL);
-      //      ++size;
+//            char * rec_name = strtok(line, REC_SEP);
+//            char * rec_path = strtok(NULL, "\n");
+//            curr = curr->next = create_node(rec_name, rec_path, NULL);
+//            ++size;
         }
 
         if(line != NULL) free(line);
@@ -83,7 +83,7 @@ void save_records(RecordsManager *m){
         fprintf(storage, REC_LINE_FORMAT, r.name, r.path);
         curr = curr->next;
     }
-
+    fflush(storage);
 }
 
 record * get_record(const RecordsManager *m, char * name){

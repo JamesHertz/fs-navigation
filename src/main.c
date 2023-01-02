@@ -84,12 +84,13 @@ void set(int argc, char **argv){
     char * old_path = create_record(manager, rec_name, new_path);
 
     if(old_path == NULL)
-        printf("records '%s' set to: %s", rec_name, new_path); 
+        printf("records '%s' set to: %s\n", rec_name, new_path); 
     else {
-        printf("records %s replaced:\n%s to %s\n", rec_name, old_path, new_path);
+        printf("records '%s' replaced:\nfrom %s to %s\n", rec_name, old_path, new_path);
         free(old_path);
     }
 
+    list(argc, argv);
     save_records(manager);
 }
 
