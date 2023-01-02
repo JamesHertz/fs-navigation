@@ -90,7 +90,6 @@ void set(int argc, char **argv){
         free(old_path);
     }
 
-    list(argc, argv);
     save_records(manager);
 }
 

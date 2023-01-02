@@ -51,13 +51,11 @@ RecordsManager * load_records(){
         char * line = NULL;
         size_t line_size = 0;
 
-        // TODO: check the reasons why this thing can fail :)
         while(getline(&line, &line_size, storage) > 0){
-            printf("line=%s\n", line);
-//            char * rec_name = strtok(line, REC_SEP);
-//            char * rec_path = strtok(NULL, "\n");
-//            curr = curr->next = create_node(rec_name, rec_path, NULL);
-//            ++size;
+            char * rec_name = strtok(line, REC_SEP);
+            char * rec_path = strtok(NULL, "\n");
+            curr = curr->next = create_node(rec_name, rec_path, NULL);
+            ++size;
         }
 
         if(line != NULL) free(line);
@@ -76,7 +74,10 @@ RecordsManager * load_records(){
 
 void save_records(RecordsManager *m){
     FILE * storage = m->storage;
+
+    fseek(storage, 0, SEEK_SET);
     ftruncate(fileno(storage), 0);
+
     lnode * curr = m->records.head;
     while (curr != NULL){
         record r = curr->record;
