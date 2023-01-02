@@ -77,6 +77,7 @@ void save_records(RecordsManager *m){
     while (curr != NULL){
         record r = curr->record;
         fprintf(storage, REC_LINE_FORMAT, r.name, r.path);
+        curr = curr->next;
     }
 
 }

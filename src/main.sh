@@ -1,11 +1,11 @@
 # TODO: change this :)
-FS_DB=/opt/fs-nav/bin/fs-db
+FS_DB=bin/main #/opt/fs-nav/bin/fs-db
 
 function fs(){
 
     case $1 in
         ''|help)
-            echo "fs=commands: " 
+            echo "fs-commands: " 
             echo "    * set <name> <path> - set's <name> path to <path>"
             echo "    * get <name>        - moves to the path of <name> if such exists"
             echo "    * <name>            - alias for get <name>"
