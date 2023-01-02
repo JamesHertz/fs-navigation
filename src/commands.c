@@ -37,7 +37,6 @@ void list(int argc, char * argv[]){
 
     lnode it = get_records_iterator();
 
-    if(it == NULL) printf("it's null :(\n");
     while(it != NULL){
         record rec = it_node_record(it);
         printf("%s - %s\n",rec->name, rec->path);

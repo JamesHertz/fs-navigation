@@ -1,5 +1,5 @@
-export TEST_DIR=$PWD # for testing reasons :)
-FS_DB=$TEST_DIR/bin/main
+# TODO: change this :)
+FS_DB=/opt/fs-nav/bin/fs-db
 
 function fs(){
 
