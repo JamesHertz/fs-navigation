@@ -77,20 +77,20 @@ void set(int argc, char **argv){
         printf("should provide: <record-name> <record-path>\n");
         return;
     }
+
     char * rec_name = argv[0]; 
     char * new_path = argv[1]; 
+
     char * old_path = create_record(manager, rec_name, new_path);
-    if(old_path != NULL){
 
-        if(strcmp(old_path, new_path) != 0){ // if it's different
-            printf("record '%s' path was replaced:\n", rec_name);
-            printf("%s to %s\n", old_path, new_path);
-            save_records(manager);
-        }
-
+    if(old_path == NULL)
+        printf("records '%s' set to: %s", rec_name, new_path); 
+    else {
+        printf("records %s replaced:\n%s to %s\n", rec_name, old_path, new_path);
         free(old_path);
     }
 
+    save_records(manager);
 }
 
 void help(int argc, char ** argv){
