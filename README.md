@@ -4,7 +4,7 @@
 ## TODO:
 
 - [ ] write a simple deployment method as the one I am using now
-- [ ] add a remove command
+- [X] add a remove command
 - [ ] add that special inner dir record insert
 
 ---
