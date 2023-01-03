@@ -2,6 +2,7 @@
 #define __RECORD__
 
 #include <stdbool.h>
+#include <stdio.h>
 
 typedef struct {
     char * name;
