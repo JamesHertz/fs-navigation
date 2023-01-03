@@ -5,24 +5,29 @@
 #include <unistd.h>
 #include "records.h"
 
-
 #define REC_SEP  "\t"
 #define REC_LINE_FORMAT "%s" REC_SEP "%s\n"
 
-#define CONFIG_FILE_NAME ".fs-nav"
+#define DEFAULT_BASE_FILE ".fs-nav"
 
-static FILE * get_config_file(){
+static FILE * get_base_file(){
+    char * base_file_name = getenv("FS_BASE_FILE");
+    char * aux = NULL;
 
-    char * home_dir = getenv("HOME");
-    char * file_full_name = NULL; // config file full name
+    if(base_file_name == NULL){
+        // TODO: what if home_dir is null? What should I do :)
+        // assert(home_dir && "HOME var not set :("); -- possible solution
+        char * home_dir = getenv("HOME");
+        asprintf(&aux, "%s/%s", home_dir, DEFAULT_BASE_FILE);
+        base_file_name = aux;
+    }
 
-    asprintf(&file_full_name, "%s/%s", home_dir, CONFIG_FILE_NAME);
-
-    FILE * file = fopen(file_full_name, "r+");
+    FILE * file = fopen(base_file_name, "r+");
     if(file == NULL && errno == ENOENT)
-        file = fopen(file_full_name, "w+"); // create's the file
+        file = fopen(base_file_name, "w+"); // create's the file
 
-    free(file_full_name);
+    if(aux != NULL) free(aux);
+
     return file;
 }
 
@@ -41,7 +46,7 @@ RecordsManager * load_records(){
     static RecordsManager * manager = NULL;
 
     if(manager == NULL){
-        FILE * storage = get_config_file(); 
+        FILE * storage = get_base_file(); 
 
         size_t size = 0;
         lnode dummy = {.next = NULL};

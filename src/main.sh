@@ -1,10 +1,10 @@
-# TODO: change this :)
-# FOR TESTING REASONS :)
-# FS_DB=bin/main #/opt/fs-nav/bin/fs-db
-
-FS_DB=/opt/fs-nav/bin/fs-db
-
 function fs(){
+
+    if  [[ ! -x $FS_EXE ]]; then
+        echo "FS_EXE not set properly exiting..."
+        return 1
+    fi
+
 
     case $1 in
         ''|help)
@@ -18,7 +18,7 @@ function fs(){
         ;;
 
         list)
-            $FS_DB list
+            $FS_EXE list
         ;;
 
         set)
@@ -41,7 +41,7 @@ function fs(){
                 return 1
             fi
 
-            $FS_DB set $2 $path
+            $FS_EXE set $2 $path
         ;;
 
         rm)
@@ -50,7 +50,7 @@ function fs(){
                 return 1
             fi
 
-            $FS_DB $@
+            $FS_EXE $@
         ;;
 
         get|*)
@@ -65,7 +65,7 @@ function fs(){
                 entry=$2
             fi
 
-            dir=$($FS_DB get $entry)
+            dir=$($FS_EXE get $entry)
 
             if [ $dir = null ]; then
                 echo "no path found for entry: $entry"
