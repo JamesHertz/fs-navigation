@@ -1,5 +1,8 @@
 # TODO: change this :)
-FS_DB=bin/main #/opt/fs-nav/bin/fs-db
+# FOR TESTING REASONS :)
+# FS_DB=bin/main #/opt/fs-nav/bin/fs-db
+
+FS_DB=/opt/fs-nav/bin/fs-db
 
 function fs(){
 
