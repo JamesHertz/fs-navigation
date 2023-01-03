@@ -11,6 +11,7 @@ function fs(){
             echo "fs-commands: " 
             echo "    * set <name> <path> - set's <name> path to <path>"
             echo "    * get <name>        - moves to the path of <name> if such exists"
+            echo "    * rm <name>         - removes entry which name is <name> if such exists"
             echo "    * <name>            - alias for get <name>"
             echo "    * list              - list all record entries stored"
             echo "    * help              - prints help message"
