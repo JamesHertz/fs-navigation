@@ -26,7 +26,7 @@ typedef struct {
 
 RecordsManager * load_records();
 
-void save_records(RecordsManager * m);
+void save_records(const RecordsManager * m);
 
 record * get_record(const RecordsManager * m, char * name);
 
@@ -34,6 +34,6 @@ char * remove_record(RecordsManager * m, char * name);
 
 char * create_record(RecordsManager * m, char * name, char * path);
 
-void close_storage(RecordsManager * m);
+void close_storage(const RecordsManager * m);
 
 #endif

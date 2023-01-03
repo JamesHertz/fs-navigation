@@ -72,7 +72,7 @@ RecordsManager * load_records(){
     return manager;
 }
 
-void save_records(RecordsManager *m){
+void save_records(const RecordsManager *m){
     FILE * storage = m->storage;
 
     fseek(storage, 0, SEEK_SET);
@@ -152,6 +152,6 @@ char * remove_record(RecordsManager * m, char * name){
     return NULL;
 }
 
-void close_storage(RecordsManager * m){
+void close_storage(const RecordsManager * m){
     fclose(m->storage);
 }
