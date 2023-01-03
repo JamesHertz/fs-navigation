@@ -3,7 +3,8 @@
 
 ## TODO:
 
-- [ ] write a simple deployment method as the one I am using now
+- [X] write a simple deployment method as the one I am using now
+- [ ] write the other part of the installation and deployment method :)
 - [X] add a remove command
 - [ ] add that special inner dir record insert
 
