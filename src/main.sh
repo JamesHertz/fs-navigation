@@ -36,7 +36,17 @@ function fs(){
                 echo "invalid path: $path"
                 return 1
             fi
+
             $FS_DB set $2 $path
+        ;;
+
+        rm)
+           if [ $# -lt 2 ]; then
+                echo "Invalid use of rm missing: <entry-name>"
+                return 1
+            fi
+
+            $FS_DB $@
         ;;
 
         get|*)

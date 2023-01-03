@@ -87,17 +87,21 @@ void save_records(RecordsManager *m){
     fflush(storage);
 }
 
-record * get_record(const RecordsManager *m, char * name){
+static lnode * get_node(const RecordsManager *m, char * name){
     lnode * curr = m->records.head;
 
     while(curr != NULL){
         record * rec = &curr->record;
-        if(!strcmp(rec->name, name))
-            return rec;
+        if(!strcmp(rec->name, name)) 
+            return curr;
         curr = curr->next;
     }
-
     return NULL;
+}
+
+record * get_record(const RecordsManager *m, char * name){
+    lnode * node = get_node(m, name);
+    return node == NULL ? NULL : &node->record;
 }
 
 char * create_record(RecordsManager *m, char * name, char * path){
@@ -120,6 +124,32 @@ char * create_record(RecordsManager *m, char * name, char * path){
     }
 
     return old_rec_path;
+}
+
+char * remove_record(RecordsManager * m, char * name){
+    lnode ** curr = &m->records.head;
+    lnode * prev = NULL;
+
+    while(*curr!= NULL){
+        if(!strcmp((*curr)->record.name, name)){
+            lnode * aux = *curr;
+
+            if(aux == m->records.tail) // change tail :)
+                m->records.tail = prev;
+
+            // updates the next of the last node
+            *curr = (*curr)->next;
+
+            record rec = aux->record;
+            free(rec.name);
+            free(aux);
+            return rec.path;
+        }
+
+        prev = *curr;
+        curr = &(*curr)->next;
+    }
+    return NULL;
 }
 
 void close_storage(RecordsManager * m){

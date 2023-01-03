@@ -30,6 +30,8 @@ void save_records(RecordsManager * m);
 
 record * get_record(const RecordsManager * m, char * name);
 
+char * remove_record(RecordsManager * m, char * name);
+
 char * create_record(RecordsManager * m, char * name, char * path);
 
 void close_storage(RecordsManager * m);

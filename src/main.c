@@ -10,12 +10,14 @@
 void set(int, char **);
 void get(int, char **);
 void list(int, char **);
+void remove_cmd(int, char **);
 void help(int, char **);
 
 command cmds[] = {
     {.name = "get",  .func = get  },
     {.name = "set",  .func = set  },
     {.name = "list", .func = list },
+    {.name = "rm",   .func = remove_cmd},
     {.name = "help", .func = help }
 };
 
@@ -58,8 +60,7 @@ int main(int argc, char * argv[]){
 
 void get(int argc, char ** argv){
     if(argc == 0){
-        printf("error running get-command\n");
-        printf("should provide: <record-name>\n");
+        printf("ERROR running get: should provide <record-name>\n");
         return;
     }
 
@@ -73,11 +74,11 @@ void get(int argc, char ** argv){
 
 void set(int argc, char **argv){
     if(argc < 2){
-        printf("error running set-command\n");
-        printf("should provide: <record-name> <record-path>\n");
+        printf("ERROR running set: should provide <record-name> <record-path>\n");
         return;
     }
 
+    // TODO: think should I do the same thing as remove?
     char * rec_name = argv[0]; 
     char * new_path = argv[1]; 
 
@@ -124,4 +125,25 @@ void list(int argc, char ** argv){
         free(format);
     }
 
+}
+
+
+void remove_cmd(int argc, char ** argv){
+    if(argc == 0){
+        printf("ERROR running rm: should provide <record-name>\n");
+        return;
+    }
+
+    for(int i = 0; i < argc; i++){
+        char * name = argv[i];
+        char * path = remove_record(manager, name);
+        if(path == NULL)
+            printf("ERROR: no entry with name '%s'\n", name);
+        else{
+            printf("entry: [ %s => %s ] removed\n", name, path);
+            free(path);
+            save_records(manager);
+        }
+    }
+    
 }
