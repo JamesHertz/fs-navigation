@@ -1,5 +1,5 @@
 # FS-NAVEGATION
- I really like to use alias to move between my directory tree, but adding an alias isn't as comfortable as I wanted it to be. So I decided that would allow me to move between my directories fast and in a very confortable way. I also plan to add new functionatlities to what a simple alias can do.
+ I really like to use alias to move between my directory tree, but adding an alias isn't as comfortable as I wanted it to be. So I decided that would allow me to move between my directories fast and in a very confortable way. I also plan to add new functionalities to what a simple alias can do. 
 
 ## TODO:
 
@@ -54,10 +54,6 @@ fs rm <record-name-1> <record-name-2> ... <record-name-n>
 # Base file
 The file where the records are stored by default it's ~/.fs-nav. But you can change that by setting the variable FS_BASE_FILE.
 
-# Reminders
-
-The idea is to do two parts. A script part that will interact with the user and will query the other part for folder's name. The other part will be a program in C and will store the names and their related \<path\> in a txt file.
-
 # Installing
 
 To install this projects you will need to do alterations in the install.mk file. In the first lines of this file you will find this:
@@ -73,3 +69,9 @@ After doing such changes you should run the following command in the terminal:
 make -f install.mk
 ```
 **Warning:**  if you want to place the project a folder where you need special permitions to create folders you will need to use **sudo** before the command above. And if you are using linux you should not use ~ in the path name.
+
+# Requirements
+
+This tool is made of a script file and some C code. In order to install it you will need to have installed: *makefile* and *a C compiler*. And in order to run it I you need a shell interpreter like bash. (I used zsh develop and test this project)
+
+It wasn't tested on windows so I offer no guarantees. But I can say that it works for unix based systems.
