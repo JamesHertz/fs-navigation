@@ -35,5 +35,5 @@ else
 $(error FS_BASE_DIR is not define. Please read the TODOS.)
 endif
 
-$(FS_BASE_DIR) $(FS_EXE_DIR) :
+$(DIRS):
 	mkdir $@
