@@ -74,4 +74,4 @@ make -f install.mk
 
 This tool is made of a script file and some C code. In order to install it you will need to have installed: *makefile* and *a C compiler*. And in order to run it I you need a shell interpreter like bash. (I used zsh develop and test this project)
 
-It wasn't tested on windows so I offer no guarantees. But I can say that it works for unix based systems.
+It wasn't tested on windows so I offer no guarantees. But I can say that it works fine for unix based systems.
