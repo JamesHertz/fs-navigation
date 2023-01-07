@@ -29,6 +29,8 @@ As you see there are 4 main commands:
 - list 
 
 Records can be tought of tuples that has a unique name and a path. When we run 
+
+## get command
 ```
 fs get <a-record-name>
 ``` 
@@ -40,19 +42,23 @@ fs <a-record-name>
 ```
 Instead of fs get. It will work for all the record names that are not equal to one of the commands name.
 
+## set command
 To set a record or to change a path of a record, we run 
 ```
 fs set <a-record-name> <a-record-path>
 ```
-the program will check if the path is valid and if it's a directory. If it's not, it will report and an error and not perform the operation.
+then **fs** (the name of the program c: ) will check if the path is is valid (exists and it's a directory). If it's not, it will report and an error and not perform the operation.
 
+**Note:** the path given to fs can be relative to the current directory of a full path (starting with /).
+
+## rm command
 We can also remove records by running:
 ```
 fs rm <record-name-1> <record-name-2> ... <record-name-n>
 ```
 
 # Base file
-The file where the records are stored by default it's ~/.fs-nav. But you can change that by setting the variable FS_BASE_FILE.
+The file where the records are stored by default it's ~/.fs-nav. But you can change that by setting the environment variable FS_BASE_FILE.
 
 # Installing
 
