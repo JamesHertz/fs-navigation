@@ -74,7 +74,7 @@ After doing such changes you should run the following command in the terminal:
 ```
 make -f install.mk
 ```
-**Warning:**  if you want to place the project a folder where you need special permitions to create folders you will need to use **sudo** before the command above. And if you are using linux you should not use ~ in the path name.
+**Warning:**  if you want to place the project a folder where you need special permitions to create folders you will need to use **sudo** before the command above, in this case if you are using linux you should not use ~ in the path name.
 
 # Requirements
 
