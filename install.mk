@@ -36,4 +36,4 @@ $(error FS_BASE_DIR is not define. Please read the TODOS.)
 endif
 
 $(DIRS):
-	mkdir $@
+	mkdir -p $@
