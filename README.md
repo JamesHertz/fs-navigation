@@ -49,7 +49,7 @@ fs set <a-record-name> <a-record-path>
 ```
 then **fs** (the name of the program c: ) will check if the path is is valid (exists and it's a directory). If it's not, it will report and an error and not perform the operation.
 
-**Note:** the path given to fs can be relative to the current directory of a full path (starting with /).
+**Note:** the path given to fs can be relative to the current directory of a full path (starting with /). If no path is given it will take the current directory as the record path.
 
 ## rm command
 We can also remove records by running:
