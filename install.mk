@@ -3,8 +3,8 @@
 #####################################################
 
 # TODO: change the two variables below for your situation
-FS_BASE_DIR := target
-RC_FILE     := jh_profile
+FS_BASE_DIR :=
+RC_FILE     :=
 
 # to upload my local variables, don't worry about it :)
 #-include .myvars.mk
