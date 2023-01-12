@@ -7,10 +7,10 @@ FS_BASE_DIR :=
 RC_FILE     :=
 
 # to upload my local variables, don't worry about it :)
-#-include .myvars.mk
+-include .myvars.mk
 include makefile
 
-FS_EXE_DIR  := $(FS_BASE_DIR)/bin
+FS_EXE_DIR  := $(FS_BASE_DIR)fs-nav/bin
 DIRS 		:= $(FS_BASE_DIR) $(FS_EXE_DIR)
 
 # files it will create
