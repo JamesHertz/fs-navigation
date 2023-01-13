@@ -9,7 +9,10 @@ EXE := $(BIN_DIR)/main
 SRC := $(wildcard $(SRC_DIR)/*.h) # takes all the file .h
 OBJ := $(SRC:$(SRC_DIR)/%.h=$(OBJ_DIR)/%.o) $(SRC_DIR)/main.c # turns the texts .h to to .o
 
-.PHONY: clean 
+# used for installing purpose
+FS_SCRIPT_FILE := $(SRC_DIR)/main.sh
+
+.PHONY: clean install
 
 all: $(EXE)
 
@@ -21,6 +24,10 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c $(SRC_DIR)/%.h | $(OBJ_DIR)
 
 $(BIN_DIR) $(OBJ_DIR):
 	mkdir -p $@
+
+install: $(EXE) $(FS_SCRIPT_FILE)
+	@echo $(FS_SCRIPT_FILE)
+	@echo $(EXE)
 
 clean:
 	@$(RM) -rfv $(BIN_DIR) $(OBJ_DIR)
