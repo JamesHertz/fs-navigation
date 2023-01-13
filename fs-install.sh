@@ -138,9 +138,9 @@ function install_fs(){
 		target_base_dir=$(get_full_name $target_base_dir)
 
     	local commands=$( \
-			echo "BASE_DIR=$( get_full_name $FS_BASE_DIR)";
-			echo "export FS_EXE=\$BASE_DIR/$fs_exe";
-			echo "source \$BASE_DIR/$fs_script"
+			echo -n "BASE_DIR=$( get_full_name $FS_BASE_DIR)\n";
+			echo -n "export FS_EXE=\$BASE_DIR/$fs_exe\n";
+			echo -n "source \$BASE_DIR/$fs_script\n"
 		)
 
 		echo -e "${cyan}** commands for your rc-file **${clear}"
