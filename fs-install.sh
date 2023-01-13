@@ -13,10 +13,13 @@ function add_dir(){
 
 function get_full_name(){
     local dirname=$1
-    if [[ $dirname =~ ^/ ]]; then
-        echo "$dirname"
+    if [[ -d $dirname ]] ; then
+        local old=$PWD
+        cd $dirname
+        echo $PWD
+        cd $old
     else
-        echo "$PWD/$dirname"
+        echo "$dirname"
     fi
 }
 
@@ -76,7 +79,8 @@ if [ $# -gt 0 ] ; then
     [ $# -gt 1 ] && RC_FILE=$2
 fi
 
-# check for all the errors
+# change error message and change the plane where you will use the
+# get_full_dir_name
 if [ -z $FS_BASE_DIR ]; then
     echo "missing the base-dir (directory for installing the program)"
     echo "call: fs-install.sh <base-dir>"
@@ -87,4 +91,5 @@ elif ! [ -d $FS_BASE_DIR ] ; then
 fi
 
 
-install_fs
+echo "FS_BASE_DIR : $FS_BASE_DIR"
+#install_fs
