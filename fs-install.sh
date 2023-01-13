@@ -7,6 +7,8 @@ function error(){
 		echo -e " | $msg"
 	done
 
+	[ -n "$err" ]  && echo "COMANDLINE-ERROR: $err"
+
 	exit 1
 }
 
@@ -30,15 +32,10 @@ function add_dir(){
     fi
 }
 
-# surpress the sterr msg for a command
-function surpress(){
-	$@ 2> /dev/null
-}
-
 function create_dirs(){
 	for dir in "$@"; do
 		if ! [ -d $dir ]; then
-			mkdir -p "$dir"  || return 1
+			err=$( mkdir "$dir" 2>&1 ) || return 1
 			echo "dir: $dir created!!"
 		fi
 	done
@@ -47,15 +44,12 @@ function create_dirs(){
 
 function install_fs(){
 
-	# 2> /dev/null -> for surpressing the stderr messages
-    local output=$( make install 2&> 1)
-
-    if [ -z "$output" ] ; then
-        error "Unable to buildig the project. Be sure you are in the right directory" "> $output"
+    if ! err=$(make install 2>&1) ; then
+        error "Unable to buildig the project. Be sure you are in the right directory" 
     fi
 
     # get the source exe and script location
-    local _values=($output)
+    local _values=($err)
     local src_script=${_values[0]}
     local src_exe=${_values[1]}
 
@@ -72,14 +66,15 @@ function install_fs(){
 		error  "Unable to create one or both of the fs-navegation diretories:" \
 			   "   -> $target_base_dir" \
 			   "   -> $target_bin_dir" \
-			   "you may need to use sudo or there's a file with the same name"
+			   "you may need to use sudo or there's a file with the same name" 
+			   
 	fi
 
 
 	echo "coping $src_exe to $fs_exe"
     cp $src_exe $fs_exe
 
-	echo "coping $src_target to $fs_target"
+	echo "coping $src_script to $fs_script"
     cp $src_script $fs_script
 
 	echo "files copied!!"
@@ -112,7 +107,7 @@ function install_fs(){
 
 
 # var used to save error ouput
-errno=
+err=
 FS_BASE_DIR=
 RC_FILE=
 
