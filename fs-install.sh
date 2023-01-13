@@ -1,13 +1,17 @@
 #!/usr/bin/env bash
 
 function error(){
-	echo "ERROR:"
+	echo -e "${red}ERROR:"
 
 	for msg in "$@" ; do
 		echo -e " | $msg"
 	done
 
-	[ -n "$err" ]  && echo "COMANDLINE-ERROR: $err"
+	if [ -n "$err" ]; then
+		echo -ne $blue
+		echo "COMANDLINE-ERROR: $err"
+	fi
+
 
 	exit 1
 }
@@ -70,14 +74,16 @@ function install_fs(){
 			   
 	fi
 
+	
+	echo -e "${cyan}** coping files **${clear}"
 
-	echo "coping $src_exe to $fs_exe"
+	echo -e "coping ${yellow}$src_exe${clear} to ${green}$fs_exe${clear}"
     cp $src_exe $fs_exe
 
-	echo "coping $src_script to $fs_script"
+	echo -e "coping ${yellow}$src_script${clear} to ${green}$fs_script${clear}"
     cp $src_script $fs_script
 
-	echo "files copied!!"
+	echo -e "${green}*** files copied!! ***${clear}"
 
 
 	if [[ -z $FS_EXE ]]; then
@@ -91,27 +97,52 @@ function install_fs(){
 			echo "source \$BASE_DIR/$fs_script"
 		)
 
+		echo -e "\n${cyan}** commands for your rc-file **${clear}"
+
 		if [[ -n $RC_FILE ]] ; then
-			echo -e "\n\n#Added by fs-install\n$commands" >> $RC_FILE
-			# TODO: adding to rc-file :)
+			commands="\n\n#Added by fs-install\n$commands"
+			echo -e "appending: ${bg_blue}$commands${clear}\n\nto $RC_FILE (your rc-file)"
+			echo -e $commands >> $RC_FILE
 			echo "Restart your terminal and you can run the program."
 		else
 			echo "You need to copy the following to your rc-file:"
-			echo -e "\n$commands\n"
+			echo -e "${bg_cyan}\n$commands${clear}\n"
 			echo "Once done you can restart your terminal and run the program"
 		fi
+		echo -e "${green}*** fs-navegation installed!! ***${clear}"
+
+	else
+		echo -e "${green}*** fs-navegation updated!! ***${clear}"
 	fi
 
-	echo -e  "\n*** fs-navegation installed!! ***"
 }
 
 
+# colors taken from the net
+red='\033[0;31m'
+green='\033[0;32m'
+yellow='\033[0;33m'
+blue='\033[0;34m'
+magenta='\033[0;35m'
+cyan='\033[0;36m'
+clear='\033[0m'
+
+# background colors
+bg_red='\033[0;41m'
+bg_green='\033[0;42m'
+bg_yellow='\033[0;43m'
+bg_blue='\033[0;44m'
+bg_magenta='\033[0;45m'
+bg_cyan='\033[0;46m'
+
+# important variables
+FS_BASE_DIR=
+FS_DIR_NAME=fs-nav
+RC_FILE=
 # var used to save error ouput
 err=
-FS_BASE_DIR=
-RC_FILE=
 
-FS_DIR_NAME=fs-nav
+
 
 MY_VARS=#.myvars.sh
 [[ -f $MY_VARS ]] && source $MY_VARS
