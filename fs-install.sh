@@ -100,10 +100,17 @@ function install_fs(){
 	function copy(){
 		local src=$1 dst=$2
 		echo -e "coping ${yellow}$src${clear} to ${green}$dst${clear}"
-		cp $src $dst
+		# trick thing :(
+		if ! err=$(cp $src $dst 2>&1) ; then 
+			error "Copying file '$src' to '$dst'." \
+			      "You might need to use ${blue}sudo"
+		fi
+                                          
+		
 	}
 
 	# checks for write access to FS_BASE_DIR and RC_FILE
+	echo "fsbasedir: $FS_BASE_DIR"
 	check_write_acess "$FS_BASE_DIR"
 	if [ -n "$RC_FILE" ] ; then
 	   [ -f "$RC_FILE" ] || error "Invalid rc-file." "It doesn't exist or it's a diretory"
@@ -150,6 +157,7 @@ function install_fs(){
 
 	echo -e "\n${cyan}** coping files **${clear}"
 
+	echo "$fs_exe"
 	copy $src_exe $target_base_dir/$fs_exe 
 	copy $src_script $target_base_dir/$fs_script
 
@@ -161,7 +169,7 @@ function install_fs(){
 		target_base_dir=$(get_full_name $target_base_dir)
 
 		local commands=$( \
-			echo -n "BASE_DIR=$( get_full_name $FS_BASE_DIR )/$FS_DIR_NAME\n";
+			echo -n "BASE_DIR=$target_base_dir\n";
 			echo -n "export FS_EXE=\$BASE_DIR/$fs_exe\n";
 			echo -n "source \$BASE_DIR/$fs_script"
 		)	
@@ -208,7 +216,6 @@ function main(){
 	fi
 
 	if [ -z "$FS_BASE_DIR" ]; then
-	# TODO: look at the message below
 	# TODO: define /opt as the default FS_BASE_DIR
 	# change error message and change the plane where you will use the
 		error \
