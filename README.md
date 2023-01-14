@@ -74,12 +74,11 @@ If you don't specify the rc-file in the end will pop-up this message to you:
 ** commands for your rc-file **
 You need to copy the following to your rc-file:
 
-BASE_DIR=<a-dir-name-c:>
-export FS_EXE=$BASE_DIR/install-dir/fs-nav/fs-exe
-source $BASE_DIR/install-dir/fs-nav/script.sh
+export FS_EXE=<base-dir>/fs-nav/bin/fs-exe
+source <base-dir>/fs-nav/script.sh
 ```
 
-You will need to paste the three last lines of it into your rc-file, otherwise fs-navegation won't work.
+You will need to paste the two last lines of it into your rc-file, otherwise fs-navegation won't work.
 
 If we had this already working and the only thing you want to do is to update it. You only need to run:
 ```
