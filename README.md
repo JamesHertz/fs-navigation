@@ -63,11 +63,11 @@ The file where the records are stored by default it's ~/.fs-nav. But you can cha
 # Installing
 
 This proccess was over simplified very recently.
-Basically you use the fs-install.sh script. The usage of the script is the following
+Basically you will use the fs-install.sh script. The usage of it is the following:
 ```
 usage: fs-install.sh <base-dir> <rc-file (optional)> "
 ```
-Where base-dir is the directory where fs-navegation will be installed. This means will create a folder and inside this one it will have the files fs-navegation needs to run. And rc-file is the run command file or profile file or your shell. (eg. if it's bash the rc-file is ~/.bashrc if its zsh it's ~/.zprofile, any other just google c:)
+Where base-dir is the directory where fs-navegation will be installed (I used /opt but you choose yours). This means will create a folder and inside this one it will have the files fs-navegation needs to run. And rc-file is the run command file or profile file or your shell. (eg. if it's bash the rc-file is ~/.bashrc if its zsh it's ~/.zprofile, any other just google c:)
 
 If you don't specify the rc-file in the end will pop-up this message to you:
 ```
@@ -85,9 +85,9 @@ If we had this already working and the only thing you want to do is to update it
 ```
 ./fs-install.sh
 ```
-The only thing that needs to be done is to replace your older files with news. No change will take take part in your rc-file so you should not specify it.
+The only thing that needs to be done is to replace your older files with news. No change needs to be done in your rc-file so you should not specify it.
 
-If you want to install it on a new directory just rerun the **usage** described above, and be sure to remove the lines fs-install.sh added to your or that you added to your rc-file.
+If you want to install it on a new directory just re-run the **usage** described above, and be sure to remove the lines fs-install.sh added (or that you added) to your rc-file, and of course delete the files in the previous folder.
 
 # Requirements
 
