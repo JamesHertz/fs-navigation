@@ -111,8 +111,8 @@ function install_fs(){
 	# checks for write access to FS_BASE_DIR and RC_FILE
 	check_write_acess "$FS_BASE_DIR"
 	if [ -n "$RC_FILE" ] ; then
-	   [ -d "$RC_FILE" ] && error "The rc-file should be a file not a directory"
-		check_write_acess "$RC_FILE"
+	   [ -f "$RC_FILE" ] || error "Invalid rc-file." "It doesn't exist or it's a diretory"
+	   check_write_acess "$RC_FILE"
 	fi
 
 	# prints info about the base-dir and the rc-file
@@ -163,7 +163,7 @@ function install_fs(){
 		local commands=$( \
 			echo -n "BASE_DIR=$( get_full_name $FS_BASE_DIR)\n";
 			echo -n "export FS_EXE=\$BASE_DIR/$fs_exe\n";
-			echo -n "source \$BASE_DIR/$fs_script\n"
+			echo -n "source \$BASE_DIR/$fs_script"
 		)	
 
 		echo -e "${cyan}** commands for your rc-file **${clear}"

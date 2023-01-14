@@ -62,19 +62,32 @@ The file where the records are stored by default it's ~/.fs-nav. But you can cha
 
 # Installing
 
-To install this projects you will need to do alterations in the install.mk file. In the first lines of this file you will find this:
+This proccess was over simplified very recently.
+Basically you use the fs-install.sh script. The usage of the script is the following
 ```
-# TODO: change the two variables below for your situation
-FS_BASE_DIR :=
-RC_FILE     :=
+usage: fs-install.sh <base-dir> <rc-file (optional)> "
 ```
-They are two variables that you will need to set values for. The first one is the folder where you want to put the project files. The second one is the rc/profile file of your terminal (for bash it's ~/.bashrc and for zsh it's ~/.zprofile if yours is none of this just google it).
+Where base-dir is the directory where fs-navegation will be installed. This means will create a folder and inside this one it will have the files fs-navegation needs to run. And rc-file is the run command file or profile file or your shell. (eg. if it's bash the rc-file is ~/.bashrc if its zsh it's ~/.zprofile, any other just google c:)
 
-After doing such changes you should run the following command in the terminal:
+If you don't specify the rc-file in the end will pop-up this message to you:
 ```
-make -f install.mk
+** commands for your rc-file **
+You need to copy the following to your rc-file:
+
+BASE_DIR=<a-dir-name-c:>
+export FS_EXE=$BASE_DIR/install-dir/fs-nav/fs-exe
+source $BASE_DIR/install-dir/fs-nav/script.sh
 ```
-**Warning:**  if you want to place the project a folder where you need special permitions to create folders you will need to use **sudo** before the command above, in this case if you are using linux you should not use ~ in the path name.
+
+You will need to paste the three last lines of it into your rc-file, otherwise fs-navegation won't work.
+
+If we had this already working and the only thing you want to do is to update it. You only need to run:
+```
+./fs-install.sh
+```
+The only thing that needs to be done is to replace your older files with news. No change will take take part in your rc-file so you should not specify it.
+
+If you want to install it on a new directory just rerun the **usage** described above, and be sure to remove the lines fs-install.sh added to your or that you added to your rc-file.
 
 # Requirements
 
