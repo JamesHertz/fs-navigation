@@ -67,6 +67,7 @@ function concat_dir(){
 # returns: 1 if couldn't create one of the dirs or 0 if everying went well
 function create_dirs(){
 	for dir in "$@"; do
+		# TODO: add some sort of message like: ** checking dirs ** exists
 		if ! [ -d $dir ]; then
 			err=$( mkdir "$dir" 2>&1 ) || return 1
 			echo "dir: $dir created!!"
@@ -161,7 +162,7 @@ function install_fs(){
 		target_base_dir=$(get_full_name $target_base_dir)
 
 		local commands=$( \
-			echo -n "BASE_DIR=$( get_full_name $FS_BASE_DIR)\n";
+			echo -n "BASE_DIR=$( get_full_name $FS_BASE_DIR )/$FS_DIR_NAME\n";
 			echo -n "export FS_EXE=\$BASE_DIR/$fs_exe\n";
 			echo -n "source \$BASE_DIR/$fs_script"
 		)	
