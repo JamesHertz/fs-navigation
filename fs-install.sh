@@ -19,8 +19,6 @@ bg_cyan='\033[0;46m'
 
 # important variables:
 FS_DIR_NAME=fs-nav # name of the fs-navegation folder in the FS-BASE-DIR folder
-# folder where fs-navegation will be instaled
-FS_BASE_DIR=
 # name of the terminal rc-file (run command file)
 RC_FILE=
 # var used to save error ouput, just like errno ;)
@@ -133,8 +131,8 @@ function install_fs(){
     local target_bin_dir=$target_base_dir/bin
 
 	# the target name files
-	local fs_exe=fs-exe # 
-	local fs_script=script.sh # 
+	local fs_exe=$target_bin_dir/fs-exe 
+	local fs_script=$target_base_dir/script.sh 
 
 	if ! create_dirs $target_base_dir $target_bin_dir ; then
 
@@ -145,17 +143,13 @@ function install_fs(){
 			   
 	fi
 
-	# the full name which means non relative of this files/dirs
-	local full_fs_exe=$target_bin_dir/$fs_exe
-	local full_fs_script=$target_base_dir/$fs_script
-
 	echo -e "${cyan}** coping files **${clear}"
 
-	echo -e "coping ${yellow}$src_exe${clear} to ${green}$full_fs_exe${clear}"
-    cp $src_exe $full_fs_exe
+	echo -e "coping ${yellow}$src_exe${clear} to ${green}$fs_exe${clear}"
+    cp $src_exe $fs_exe
 
-	echo -e "coping ${yellow}$src_script${clear} to ${green}$full_fs_script${clear}"
-    cp $src_script $full_fs_script
+	echo -e "coping ${yellow}$src_script${clear} to ${green}$fs_script${clear}"
+    cp $src_script $fs_script
 
 	echo -e "${green}*** files copied!! ***${clear}\n"
 	
@@ -165,9 +159,10 @@ function install_fs(){
 		target_base_dir=$(get_full_name $target_base_dir)
 
 		local commands=$( \
-			echo -n "BASE_DIR=$( get_full_name $FS_BASE_DIR )/$FS_DIR_NAME\n";
-			echo -n "export FS_EXE=\$BASE_DIR/$fs_exe\n";
-			echo -n "source \$BASE_DIR/$fs_script"
+			# TODO: think of a soluction for this
+			#echo -n "BASE_DIR=$( get_full_name $FS_BASE_DIR )/$FS_DIR_NAME\n";
+			echo -n "export FS_EXE=$fs_exe\n";
+			echo -n "source $fs_script"
 		)	
 
 		echo -e "${cyan}** commands for your rc-file **${clear}"
