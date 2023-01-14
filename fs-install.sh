@@ -145,14 +145,17 @@ function install_fs(){
 			   
 	fi
 
-	
+	# the full name which means non relative of this files/dirs
+	local full_fs_exe=$target_bin_dir/$fs_exe
+	local full_fs_script=$target_base_dir/$fs_script
+
 	echo -e "${cyan}** coping files **${clear}"
 
-	echo -e "coping ${yellow}$src_exe${clear} to ${green}$target_bin_dir/$fs_exe${clear}"
-    cp $src_exe $fs_exe
+	echo -e "coping ${yellow}$src_exe${clear} to ${green}$full_${clear}"
+    cp $src_exe $full_fs_exe
 
-	echo -e "coping ${yellow}$src_script${clear} to ${green}$target_base_dir/$fs_script${clear}"
-    cp $src_script $fs_script
+	echo -e "coping ${yellow}$src_script${clear} to ${green}$full_fs_script${clear}"
+    cp $src_script $full_fs_script
 
 	echo -e "${green}*** files copied!! ***${clear}\n"
 	
