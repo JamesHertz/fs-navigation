@@ -151,7 +151,7 @@ function install_fs(){
 
 	echo -e "${cyan}** coping files **${clear}"
 
-	echo -e "coping ${yellow}$src_exe${clear} to ${green}$full_${clear}"
+	echo -e "coping ${yellow}$src_exe${clear} to ${green}$full_fs_exe${clear}"
     cp $src_exe $full_fs_exe
 
 	echo -e "coping ${yellow}$src_script${clear} to ${green}$full_fs_script${clear}"
