@@ -19,6 +19,10 @@ bg_cyan='\033[0;46m'
 
 # important variables:
 FS_DIR_NAME=fs-nav # name of the fs-navegation folder in the FS-BASE-DIR folder
+FS_BIN_DIR=bin 
+# name of the folder where to place it's folder that will have the files
+# of fs-navegation
+FS_BASE_DIR=
 # name of the terminal rc-file (run command file)
 RC_FILE=
 # var used to save error ouput, just like errno ;)
@@ -61,19 +65,6 @@ function concat_dir(){
     fi
 }
 
-# creates dirs passed as arguments if they don't exits
-# returns: 1 if couldn't create one of the dirs or 0 if everying went well
-function create_dirs(){
-	for dir in "$@"; do
-		# TODO: add some sort of message like: ** checking dirs ** exists
-		if ! [ -d $dir ]; then
-			err=$( mkdir "$dir" 2>&1 ) || return 1
-			echo "dir: $dir created!!"
-		fi
-	done
-	return 0
-}
-
 # prints information about the base-dir and rc-file
 function print_init_info(){
 	echo "------------------------"
@@ -82,12 +73,12 @@ function print_init_info(){
 	echo -ne "${blue}rc-file :${clear} "
 
 	if [ -z $RC_FILE ]; then
-	   [ -n $FS_EXE ] && echo "---" || echo -e "${red}<none>" 
+	   [ -z $FS_EXE ] && echo -e "${red}<none>" || echo "---" 
 	else
 		echo -e "${green}$RC_FILE"
 	fi
 
-	echo -e "${clear}------------------------\n"
+	echo -e "${clear}------------------------"
 }
 
 # checks the script has wirte access in the diretory/file
@@ -102,10 +93,17 @@ function check_write_acess(){
 }
 
 
+
 # copies files to their respective place
 # and reports an error whenever such happens
 function install_fs(){
 
+	# used to copy files and display beautiful messages :)
+	function copy(){
+		local src=$1 dst=$2
+		echo -e "coping ${yellow}$src${clear} to ${green}$dst${clear}"
+		cp $src $dst
+	}
 
 	# checks for write access to FS_BASE_DIR and RC_FILE
 	check_write_acess "$FS_BASE_DIR"
@@ -116,6 +114,8 @@ function install_fs(){
 
 	# prints info about the base-dir and the rc-file
 	print_init_info
+
+	# look at this later: https://www.redhat.com/sysadmin/arguments-options-bash-scripts 
 	
     if ! err=$(make install 2>&1) ; then
         error "Unable to buildig the project. Be sure you are in the right directory" 
@@ -131,25 +131,29 @@ function install_fs(){
     local target_bin_dir=$target_base_dir/bin
 
 	# the target name files
-	local fs_exe=$target_bin_dir/fs-exe 
-	local fs_script=$target_base_dir/script.sh 
+	local fs_exe=bin/fs-exe 
+	local fs_script=script.sh 
 
-	if ! create_dirs $target_base_dir $target_bin_dir ; then
+	echo -e "\n${cyan}** checking dirs **${clear}"
 
-		error  "Unable to create one or both of the fs-navegation diretories:" \
-			   "   -> $target_base_dir" \
-			   "   -> $target_bin_dir" \
-			   "There might be some files with the same name as these dirs." 
-			   
-	fi
+	for dir in  "$target_base_dir" "$target_bin_dir" ; do
+		echo -ne "dir: ${blue}$dir${clear} - "
+		if ! [ -d $dir ]; then
+	   		if ! err=$( mkdir "$dir" 2>&1 ) ; then
+				echo -e "${red}error"
+				error "Could not create dir: $dir"
+			fi
+			echo -e "${cyan}created${clear}"
+		else
+			echo -e "${green}exits${clear}"
+		fi
+	done
 
-	echo -e "${cyan}** coping files **${clear}"
 
-	echo -e "coping ${yellow}$src_exe${clear} to ${green}$fs_exe${clear}"
-    cp $src_exe $fs_exe
+	echo -e "\n${cyan}** coping files **${clear}"
 
-	echo -e "coping ${yellow}$src_script${clear} to ${green}$fs_script${clear}"
-    cp $src_script $fs_script
+	copy $src_exe $target_base_dir/$fs_exe 
+	copy $src_script $target_base_dir/$fs_script
 
 	echo -e "${green}*** files copied!! ***${clear}\n"
 	
@@ -159,10 +163,9 @@ function install_fs(){
 		target_base_dir=$(get_full_name $target_base_dir)
 
 		local commands=$( \
-			# TODO: think of a soluction for this
-			#echo -n "BASE_DIR=$( get_full_name $FS_BASE_DIR )/$FS_DIR_NAME\n";
-			echo -n "export FS_EXE=$fs_exe\n";
-			echo -n "source $fs_script"
+			echo -n "BASE_DIR=$( get_full_name $FS_BASE_DIR )/$FS_DIR_NAME\n";
+			echo -n "export FS_EXE=\$BASE_DIR/$fs_exe\n";
+			echo -n "source \$BASE_DIR/$fs_script"
 		)	
 
 		echo -e "${cyan}** commands for your rc-file **${clear}"
@@ -208,6 +211,7 @@ function main(){
 
 	if [ -z "$FS_BASE_DIR" ]; then
 	# TODO: look at the message below
+	# TODO: define /opt as the default FS_BASE_DIR
 	# change error message and change the plane where you will use the
 		error \
 		"You have to specify at least the base-dir (directory to install the program)" \
