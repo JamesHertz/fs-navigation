@@ -19,9 +19,7 @@ bg_cyan='\033[0;46m'
 
 # important variables:
 FS_DIR_NAME=fs-nav # name of the fs-navegation folder in the FS-BASE-DIR folder
-FS_BIN_DIR=bin 
-# name of the folder where to place it's folder that will have the files
-# of fs-navegation
+# name for FS_DIR_NAME folder which in turn will have fs-navegation files 
 FS_BASE_DIR=
 # name of the terminal rc-file (run command file)
 RC_FILE=
