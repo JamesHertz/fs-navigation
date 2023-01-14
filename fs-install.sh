@@ -169,8 +169,8 @@ function install_fs(){
 		echo -e "${cyan}** commands for your rc-file **${clear}"
 
 		if [[ -n "$RC_FILE" ]] ; then
-			commands="\n#Added by fs-install\n$commands"
-			echo -e "appending: \n${bg_blue}$commands${clear}\nto your ${blue}rc-file${clear}"
+			commands="\n# Added by fs-install\n$commands"
+			echo -e "appending: \n${bg_blue}$commands${clear}\n\nto your ${blue}rc-file${clear}"
 			echo -e "\n$commands" >> $RC_FILE
 			echo "Restart your terminal and you can run the program."
 		else
