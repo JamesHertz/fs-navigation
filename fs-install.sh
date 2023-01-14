@@ -132,8 +132,8 @@ function install_fs(){
     local target_bin_dir=$target_base_dir/bin
 
 	# the target name files
-	local fs_exe=$target_base_dir/fs-exe
-	local fs_script=$target_base_dir/script.sh
+	local fs_exe=fs-exe # 
+	local fs_script=script.sh # 
 
 	if ! create_dirs $target_base_dir $target_bin_dir ; then
 
@@ -147,10 +147,10 @@ function install_fs(){
 	
 	echo -e "${cyan}** coping files **${clear}"
 
-	echo -e "coping ${yellow}$src_exe${clear} to ${green}$fs_exe${clear}"
+	echo -e "coping ${yellow}$src_exe${clear} to ${green}$target_bin_dir/$fs_exe${clear}"
     cp $src_exe $fs_exe
 
-	echo -e "coping ${yellow}$src_script${clear} to ${green}$fs_script${clear}"
+	echo -e "coping ${yellow}$src_script${clear} to ${green}$target_base_dir/$fs_script${clear}"
     cp $src_script $fs_script
 
 	echo -e "${green}*** files copied!! ***${clear}\n"
