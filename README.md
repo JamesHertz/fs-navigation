@@ -7,6 +7,13 @@
 - [X] write the other part of the installation and deployment method :)
 - [X] add a remove command
 - [ ] add that special inner dir record insert
+- [ ] think of a new way to store records
+
+# IDEAS:
+Turn this into a real alias. Instead of records pointing to files they will now point to commands. That can be one of three types:
+- General pupose (just like alias)
+- Directories (works just like the current version of fs)
+- Files (opens them using the open command)
 
 # how to does it work?
 

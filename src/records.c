@@ -38,13 +38,15 @@ static lnode * create_node(char * name, char * path, lnode * next){
 
     lnode * node = malloc(sizeof(lnode));
     node->record = rec;
+    node->next = next;
     return node;
 }
 
 RecordsManager * load_records(){
-    static RecordsManager * manager = NULL;
+    static RecordsManager * manager = NULL; // Am I not over optmizing?
 
     if(manager == NULL){
+        // TODO: when storage is null - do something
         FILE * storage = get_base_file(); 
 
         size_t size = 0;
@@ -80,7 +82,8 @@ void save_records(const RecordsManager *m){
     FILE * storage = m->storage;
 
     fseek(storage, 0, SEEK_SET);
-    ftruncate(fileno(storage), 0);
+    // fileno(FILE * f) returns the file descriptor of a FILE
+    ftruncate(fileno(storage), 0); // truncates the file
 
     lnode * curr = m->records.head;
     while (curr != NULL){
