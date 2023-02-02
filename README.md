@@ -74,15 +74,16 @@ Basically you will use the fs-install.sh script. The usage of it is the followin
 ```
 usage: fs-install.sh <base-dir> <rc-file (optional)> "
 ```
-Where base-dir is the directory where fs-navegation will be installed (I used /opt but you choose yours). This means will create a folder and inside this one it will have the files fs-navegation needs to run. And rc-file is the run command file or profile file or your shell. (eg. if it's bash the rc-file is ~/.bashrc if its zsh it's ~/.zprofile, any other just google c:)
+Where base-dir is the directory where fs-navegation will be installed (I used /opt but you choose yours). This means will create a folder and inside this one it will have the files fs-navegation needs to run. And rc-file is the run command file or profile file or your shell. (eg. if it's bash the rc-file is ~/.bashrc if its zsh it's ~/.zshrc, any other just google c:)
 
 If you don't specify the rc-file in the end will pop-up this message to you:
 ```
 ** commands for your rc-file **
 You need to copy the following to your rc-file:
 
-export FS_EXE=<base-dir>/fs-nav/bin/fs-exe
-source <base-dir>/fs-nav/script.sh
+BASE_DIR=<a-dir-name-c:>
+export FS_EXE=$BASE_DIR/bin/fs-exe
+source $BASE_DIR/script.sh
 ```
 
 You will need to paste the two last lines of it into your rc-file, otherwise fs-navegation won't work.
