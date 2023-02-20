@@ -103,18 +103,21 @@ void list(int argc, char ** argv){
     // get's the max lenght of the records name
     // pretty prints
     lnode * curr = manager->records.head;
-    int max = -1;
+    size_t max = 0;
 
     while(curr != NULL){
-        int lenght = strlen(curr->record.name);
+        size_t lenght = strlen(curr->record.name);
         if(lenght > max) max = lenght;
         curr = curr->next;
     }
     
 
-    if(max != -1){
+    if(max == 0)
+        printf("No records...\n");
+    else {
+        // TODO: print heading :(
         char * format = NULL;
-        asprintf(&format, "%%-%ds => %%s\n", max);
+        asprintf(&format, "%%-%zus => %%s\n", max);
         curr = manager->records.head;
         while(curr != NULL){
             record rec = curr->record;
