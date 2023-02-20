@@ -69,12 +69,19 @@ The file where the records are stored by default it's ~/.fs-nav. But you can cha
 
 # Installing
 
-This proccess was over simplified very recently.
-Basically you will use the fs-install.sh script. The usage of it is the following:
+You can install by run the following command:
+```
+sudo ./fs-install.sh /opt
+```
+This will install fs-navegation in **/opt** folder, more about it below.
+
+## Understand install script
+
+The usage of the script is the following:
 ```
 usage: fs-install.sh <base-dir> <rc-file (optional)> "
 ```
-Where base-dir is the directory where fs-navegation will be installed (I used /opt but you choose yours). This means will create a folder and inside this one it will have the files fs-navegation needs to run. And rc-file is the run command file or profile file or your shell. (eg. if it's bash the rc-file is ~/.bashrc if its zsh it's ~/.zshrc, any other just google c:)
+Where **base-dir** is the directory where fs-navegation will be installed (I used /opt but you choose yours). This means will create a folder and inside this one it will have the files fs-navegation needs to run. And **rc-file** is the run command file or profile file of your shell. (eg. if it's bash the rc-file is ~/.bashrc if its zsh it's ~/.zshrc, any other just google c:)
 
 If you don't specify the rc-file in the end will pop-up this message to you:
 ```
