@@ -8,6 +8,8 @@
 - [X] add a remove command
 - [ ] add that special inner dir record insert
 - [ ] think of a new way to store records
+    - Use protocol buffer make a bridge between C and C++
+- [ ] Add a recursive set to a folder \<folder\> where it's sub folder are added with names \<folder\>/\<sub-folder\>
 
 # IDEAS:
 Turn this into a real alias. Instead of records pointing to files they will now point to commands. That can be one of three types:

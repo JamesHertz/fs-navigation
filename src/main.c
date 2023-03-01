@@ -11,6 +11,7 @@ void set(int, char **);
 void get(int, char **);
 void list(int, char **);
 void remove_cmd(int, char **);
+void rename_record(int, char **);
 void help(int, char **);
 
 command cmds[] = {
@@ -18,6 +19,7 @@ command cmds[] = {
     {.name = "set",  .func = set  },
     {.name = "list", .func = list },
     {.name = "rm",   .func = remove_cmd},
+    {.name = "mv",   .func = rename_record},
     {.name = "help", .func = help }
 };
 
@@ -79,6 +81,7 @@ void set(int argc, char **argv){
     }
 
     // TODO: think should I do the same thing as remove?
+    // TODO: the very funny reasoning :)
     char * rec_name = argv[0]; 
     char * new_path = argv[1]; 
 
@@ -95,7 +98,14 @@ void set(int argc, char **argv){
 }
 
 void help(int argc, char ** argv){
-    printf("TO BE DONE!!\n");
+    printf("fs-commands: \n");
+    printf("    * set <name> <path>     - set's <name> path to <path>\n");
+    printf("    * get <name>            - moves to the path of <name> if such exists\n");
+    printf("    * rm <name>             - removes entry which name is <name> if such exists\n");
+    printf("    * mv <name> <new-name>  - changed record name from <name> to <new-name>\n");
+    printf("    * <name>                - alias for get <name>\n");
+    printf("    * list                  - list all record entries stored\n");
+    printf("    * help                  - prints help message\n");
 }
 
 void list(int argc, char ** argv){
@@ -119,6 +129,7 @@ void list(int argc, char ** argv){
         char * format = NULL;
         asprintf(&format, "%%-%zus => %%s\n", max);
         curr = manager->records.head;
+        printf(format, "NAME", "PATH");
         while(curr != NULL){
             record rec = curr->record;
             printf(format, rec.name, rec.path);
@@ -133,7 +144,7 @@ void list(int argc, char ** argv){
 
 void remove_cmd(int argc, char ** argv){
     if(argc == 0){
-        printf("ERROR running rm: should provide <record-name>\n");
+        printf("Invalid use of rm missing: <entry-name>\n");
         return;
     }
 
@@ -149,4 +160,17 @@ void remove_cmd(int argc, char ** argv){
         }
     }
     
+}
+
+
+void rename_record(int argc, char ** argv){
+    if(argc < 2){
+        printf("ERROR running mv: should provide <record-name> <new-record-name>\n");
+        return;
+    }
+
+    char * src_name    = argv[0];
+    char * target_name = argv[1];
+
+    printf("src: %s ; target: %s\n", src_name, target_name);
 }
