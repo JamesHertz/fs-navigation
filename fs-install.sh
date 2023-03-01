@@ -128,8 +128,8 @@ function install_fs(){
 
     # get the source exe and script location
     local _values=($err)
-    local src_script=${_values[0]}
-    local src_exe=${_values[1]}
+    local src_script=${_values[ ${#_values[@]} - 2]} # element before the last one of the array :(
+    local src_exe=${_values[ ${#_values[@]} - 1]}    # last element of the array :(
 
 	# get the target dirs names
     local target_base_dir=$(concat_dir $FS_BASE_DIR $FS_DIR_NAME )

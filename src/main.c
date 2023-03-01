@@ -1,11 +1,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/stat.h>
 #include "records.h"
 #include "commands.h"
 
 #define ERROR "null"
 #define N_COMMANDS (sizeof(cmds) / sizeof(command))
+
+#define BAD_USAGE "Wrong number of arguments\n"
+
+#define error(...) printf("ERROR: " __VA_ARGS__)
 
 void set(int, char **);
 void get(int, char **);
@@ -47,62 +52,92 @@ int main(int argc, char * argv[]){
 
     cmd_func func = (*cmd == '\0') ? help : get_func(&cmd_store, cmd);
 
-    if(func != NULL){
-        manager = load_records();
+    if(func == NULL) {
+        printf("Unknown command: %s\n", cmd);
+        printf("Please run fs script instead.\n");
+    } else if((manager = load_records()) == NULL)
+        // TODO: print basefile name
+        printf("Unable to upload records. Please check your base file.\n");
+    else {
         func(new_argc, new_argv);
         close_storage(manager);
-    }else {
-        // TODO some changes...
-        printf("Unknown command: %s\n", cmd);
-        printf("Run: <program> help - to get the list of all commands\n");
+        return 0;
     }
-
-    return 0;
+    return 1;
 }
+
 
 void get(int argc, char ** argv){
     if(argc == 0){
-        printf("ERROR running get: should provide <record-name>\n");
-        return;
+        error(BAD_USAGE);
+        printf("usage: fs get <record-name> \n");
+        exit(1);
     }
 
-    record * r = get_record(manager, argv[0]);
+    char * rec_name = argv[0];
+    record * r = get_record(manager, rec_name);
+
     if(r != NULL)
         printf("%s", r->path);
     else
-        printf(ERROR);
-
+        error("No record with name: %s\n", rec_name);
 }
 
-void set(int argc, char **argv){
-    if(argc < 2){
-        printf("ERROR running set: should provide <record-name> <record-path>\n");
-        return;
-    }
+char * resolve_path(char * path){
+    if( path == NULL ) return getenv("PWD"); // current directory
 
-    // TODO: think should I do the same thing as remove?
-    // TODO: the very funny reasoning :)
-    char * rec_name = argv[0]; 
-    char * new_path = argv[1]; 
+    struct stat info;
+    if ( stat(path, &info) == -1 )
+        perror("ERROR");
+    else if( !S_ISDIR(info.st_mode) ) 
+        error("Invalid path: %s\n", realpath(path, NULL));
+    else
+        return realpath(path, NULL);;
+
+    return NULL;
+}
+void set(int argc, char **argv){
+    if(argc < 1){
+        error(BAD_USAGE);
+        printf("usage: fs set <record-name> [ <record-name> ]\n");
+        exit(1);
+    } 
+
+    char * rec_name  = argv[0]; 
+    char * path      = argc < 2 ? NULL : argv[1];
+    char * new_path  = resolve_path(path);
+
+    if(new_path == NULL){
+        error("Unable to resolve record path : %s\n", path);
+        exit(1);
+    }
 
     char * old_path = create_record(manager, rec_name, new_path);
 
-    if(old_path == NULL)
-        printf("records '%s' set to: %s\n", rec_name, new_path); 
-    else {
-        printf("records '%s' replaced:\nfrom %s to %s\n", rec_name, old_path, new_path);
-        free(old_path);
+    if ( old_path != NULL && strcmp(old_path, new_path) == 0 ) {
+        printf("record        [ '%s' => '%s' ]\n", rec_name, new_path);
+        printf("already exits.\n");
+    }else {
+        if(old_path == NULL)
+            // TODO: look at this print :)
+            printf("record [ %s => %s ] added.\n", rec_name, new_path); 
+        else {
+            printf("replaced record  [ %s => %s ]\n", rec_name, old_path);
+            printf("to               [ %s => %s ]\n", rec_name, new_path);
+            free(old_path);
+        }
+        save_records(manager);
     }
 
-    save_records(manager);
+    // free(new_path); No need since the program will end any way :)
 }
 
 void help(int argc, char ** argv){
     printf("fs-commands: \n");
-    printf("    * set <name> <path>     - set's <name> path to <path>\n");
+    printf("    * set <name> [ <path> ] - set's <name> path to <path>\n");
     printf("    * get <name>            - moves to the path of <name> if such exists\n");
-    printf("    * rm <name>             - removes entry which name is <name> if such exists\n");
-    printf("    * mv <name> <new-name>  - changed record name from <name> to <new-name>\n");
+    printf("    * rm  <name>            - removes record which name is <name> if such exists\n");
+    printf("    * mv  <name> <new-name> - changed record name from <name> to <new-name>\n");
     printf("    * <name>                - alias for get <name>\n");
     printf("    * list                  - list all record entries stored\n");
     printf("    * help                  - prints help message\n");
@@ -121,7 +156,6 @@ void list(int argc, char ** argv){
         curr = curr->next;
     }
     
-
     if(max == 0)
         printf("No records...\n");
     else {
@@ -129,7 +163,7 @@ void list(int argc, char ** argv){
         char * format = NULL;
         asprintf(&format, "%%-%zus => %%s\n", max);
         curr = manager->records.head;
-        printf(format, "NAME", "PATH");
+        // printf(format, "NAME", "PATH");
         while(curr != NULL){
             record rec = curr->record;
             printf(format, rec.name, rec.path);
@@ -144,29 +178,35 @@ void list(int argc, char ** argv){
 
 void remove_cmd(int argc, char ** argv){
     if(argc == 0){
-        printf("Invalid use of rm missing: <entry-name>\n");
-        return;
+        error(BAD_USAGE);
+        printf("usage: fs rm <record-name>\n");
+        exit(1);
     }
 
-    for(int i = 0; i < argc; i++){
+    int i;
+    for(i = 0; i < argc; i++){
         char * name = argv[i];
         char * path = remove_record(manager, name);
-        if(path == NULL)
-            printf("ERROR: no entry with name '%s'\n", name);
-        else{
-            printf("entry: [ %s => %s ] removed\n", name, path);
+        if(path == NULL){
+            error("no record with name '%s'\n", name);
+            if(i > 0) printf("Restoring all removed records...\n");
+            break;
+        } else {
+            printf("record: [ %s => %s ] removed\n", name, path);
             free(path);
-            save_records(manager);
         }
     }
+
+    if( i == argc ) save_records(manager);
     
 }
 
 
 void rename_record(int argc, char ** argv){
     if(argc < 2){
-        printf("ERROR running mv: should provide <record-name> <new-record-name>\n");
-        return;
+        error(BAD_USAGE);
+        printf("usage: fs mv <record-name> <new-record-name>\n");
+        exit(1);
     }
 
     char * src_name    = argv[0];

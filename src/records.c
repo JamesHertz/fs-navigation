@@ -14,9 +14,8 @@ static FILE * get_base_file(){
     char * aux = NULL;
 
     if(base_file_name == NULL){
-        // TODO: what if home_dir is null? What should I do :)
-        // assert(home_dir && "HOME var not set :("); -- possible solution
         char * home_dir = getenv("HOME");
+        if(home_dir == NULL) return NULL;
         asprintf(&aux, "%s/%s", home_dir, DEFAULT_BASE_FILE);
         base_file_name = aux;
     }
@@ -24,7 +23,7 @@ static FILE * get_base_file(){
     FILE * file = fopen(base_file_name, "r+");
     if(file == NULL && errno == ENOENT)
         file = fopen(base_file_name, "w+"); // create's the file
-
+                                            //
     if(aux != NULL) free(aux);
 
     return file;
@@ -46,8 +45,9 @@ RecordsManager * load_records(){
     static RecordsManager * manager = NULL; // Am I not over optmizing?
 
     if(manager == NULL){
-        // TODO: when storage is null - do something
         FILE * storage = get_base_file(); 
+
+        if(storage == NULL) return NULL;
 
         size_t size = 0;
         lnode dummy = {.next = NULL};
