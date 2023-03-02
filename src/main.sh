@@ -8,7 +8,7 @@ function fs(){
 
     case $1 in
 
-        list|rm|set|help|'')
+        list|rm|mv|set|help|'')
             $FS_EXE $@
         ;;
 

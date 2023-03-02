@@ -214,6 +214,7 @@ function main(){
 		FS_BASE_DIR=$1
 		[ $# -gt 1 ] && RC_FILE=$2
 	fi
+    echo $FS_BASE_DIR
 
 	if [ -z "$FS_BASE_DIR" ]; then
 	# TODO: define /opt as the default FS_BASE_DIR
@@ -227,6 +228,5 @@ function main(){
 
 	install_fs
 }
-
 
 main "$@"

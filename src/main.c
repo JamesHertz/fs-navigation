@@ -5,12 +5,15 @@
 #include "records.h"
 #include "commands.h"
 
-#define ERROR "null"
-#define N_COMMANDS (sizeof(cmds) / sizeof(command))
-
-#define BAD_USAGE "Wrong number of arguments\n"
-
+// useful functions
 #define error(...) printf("ERROR: " __VA_ARGS__)
+
+// some messages
+#define BAD_USAGE "Wrong number of arguments\n"
+#define NO_SUCH_RECORD "No record with name: %s\n"
+#define RECORD_REMOVED "record: [ %s => %s ] removed\n"
+#define RECORD_REPLACED "replaced record  [ %s => %s ]\n" \
+                        "to               [ %s => %s ]\n"
 
 void set(int, char **);
 void get(int, char **);
@@ -33,7 +36,7 @@ RecordsManager * manager;
 int main(int argc, char * argv[]){
 
     commands cmd_store = {
-        .count = N_COMMANDS,
+        .count = sizeof(cmds) / sizeof(command),
         .commands = cmds,
     };
 
@@ -59,6 +62,7 @@ int main(int argc, char * argv[]){
         // TODO: print basefile name
         printf("Unable to upload records. Please check your base file.\n");
     else {
+        // TODO: make functions return error code :)
         func(new_argc, new_argv);
         close_storage(manager);
         return 0;
@@ -80,11 +84,13 @@ void get(int argc, char ** argv){
     if(r != NULL)
         printf("%s", r->path);
     else
-        error("No record with name: %s\n", rec_name);
+        error(NO_SUCH_RECORD, rec_name);
 }
 
 char * resolve_path(char * path){
-    if( path == NULL ) return getenv("PWD"); // current directory
+    if( path == NULL ) return getenv("PWD");
+    //    char * aux = getenv("PWD");
+    //    return aux == NULL ? aux : strdup(aux);
 
     struct stat info;
     if ( stat(path, &info) == -1 )
@@ -122,14 +128,14 @@ void set(int argc, char **argv){
             // TODO: look at this print :)
             printf("record [ %s => %s ] added.\n", rec_name, new_path); 
         else {
-            printf("replaced record  [ %s => %s ]\n", rec_name, old_path);
-            printf("to               [ %s => %s ]\n", rec_name, new_path);
+            printf(RECORD_REPLACED, rec_name, old_path, rec_name, new_path);
             free(old_path);
         }
         save_records(manager);
     }
 
-    // free(new_path); No need since the program will end any way :)
+    // TODO: solve this :)
+    // free(new_path); // No need since the program will end any way :)
 }
 
 void help(int argc, char ** argv){
@@ -192,7 +198,7 @@ void remove_cmd(int argc, char ** argv){
             if(i > 0) printf("Restoring all removed records...\n");
             break;
         } else {
-            printf("record: [ %s => %s ] removed\n", name, path);
+            printf(RECORD_REMOVED, name, path);
             free(path);
         }
     }
@@ -211,6 +217,26 @@ void rename_record(int argc, char ** argv){
 
     char * src_name    = argv[0];
     char * target_name = argv[1];
+    
+    record * src_rec   = get_record(manager, src_name);
 
-    printf("src: %s ; target: %s\n", src_name, target_name);
+    if( src_rec == NULL ) {
+        error(NO_SUCH_RECORD, src_name);
+        exit(1);
+    } else {
+        char * target_path = remove_record(manager, target_name);
+        if ( target_path != NULL ) {
+            printf(RECORD_REMOVED, target_name, target_path);
+            free(target_path);
+        }
+
+        free(src_rec->name);
+        src_rec->name = target_name;
+        printf(RECORD_REPLACED, src_name, src_rec->path, 
+                target_name, src_rec->path);
+
+        save_records(manager);
+    }
+
+
 }
