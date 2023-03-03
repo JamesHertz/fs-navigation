@@ -3,7 +3,7 @@ OBJ_DIR := obj
 BIN_DIR := bin
 
 O_FILE := $(SRC_DIR)/commands.h 
-CFLAGS := -Wall
+CFLAGS := -Wall -O2
 
 EXE := $(BIN_DIR)/main
 SRC := $(wildcard $(SRC_DIR)/*.h) # takes all the file .h
