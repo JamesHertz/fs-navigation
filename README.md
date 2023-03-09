@@ -1,7 +1,29 @@
 # FS-NAVEGATION 
 
-I really like to use alias to move between my directory tree, but adding an alias isn't as comfortable as I wanted it to be. So I decided that would allow me to move between my directories fast and in a very confortable way. I also plan to add new functionalities to what a simple alias can do. ## TODO: - [X] write a simple deployment method as the one I am using now [X] write the other part of the installation and deployment method :) [X] add a remove command [ ] add that special inner dir record insert [ ] think of a new way to store records Use protocol buffer make a bridge between C and C++ [ ] Add a recursive set to a folder \<folder\> where it's sub folder are added with names \<folder\>/\<sub-folder\> [ ] Increase the space locality of fs-navegation # IDEAS: Turn this into a real alias. Instead of records pointing to files they will now point to commands. That can be one of three types: General pupose (just like alias) Directories (works just like the current version of fs) Files (opens them using the open command) # how to does it work? It's very easy to use. After following the [instalation guide](#installing) you can run fs in you terminal and it will display the following menu:
+I really like to use alias to move between my directory tree, but adding an alias isn't as comfortable as I wanted it to be. So I decided that would allow me to move between my directories fast and in a very confortable way. I also plan to add new functionalities to what a simple alias can do. 
 
+## TODO: 
+- [X] write a simple deployment method as the one I am using now 
+- [X] write the other part of the installation and deployment method :) 
+- [X] add a remove command 
+- [ ] add that special inner dir record insert 
+- [ ] think of a new way to store records 
+    - Use protocol buffer make a bridge between C and C++ 
+- [ ] Add a recursive set to a folder \<folder\> where it's sub folder are added with names \<folder\>/\<sub-folder\> 
+- [ ] Increase the space locality of fs-navegation 
+
+
+# IDEAS: 
+- Turn this into a real alias. 
+- Instead of records pointing to files they will now point to commands. 
+- That can be one of three types: 
+    - General pupose (just like alias) 
+    - Directories (works just like the current version of fs) 
+    - Files (opens them using the open command) 
+
+# how to does it work? It's very easy to use. 
+
+After following the [instalation guide](#installing) you can run fs in you terminal and it will display the following menu:
 ```
 fs-commands:
     * set <name> [ <path> ] - set's <name> path to <path>
