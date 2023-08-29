@@ -22,6 +22,11 @@ typedef struct {
 
 typedef struct {
     llist  records;
+    // struct {
+    //     size_t capacity;
+    //     size_t length;;
+    //     record * items;
+    // } recs;
     FILE * storage;
 } RecordsManager;
 

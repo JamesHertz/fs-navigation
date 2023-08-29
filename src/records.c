@@ -8,13 +8,15 @@
 #define REC_LINE_FORMAT "%s" REC_SEP "%s\n"
 
 #define DEFAULT_BASE_FILE ".fs-nav"
+#define HOME_DIR "HOME"
+#define BASE_FILE "FS_BASE_FILE"
 
 static FILE * get_base_file(){
-    char * base_file_name = getenv("FS_BASE_FILE");
+    char * base_file_name = getenv(BASE_FILE);
     char * aux = NULL;
 
     if(base_file_name == NULL){
-        char * home_dir = getenv("HOME");
+        char * home_dir = getenv(HOME_DIR);
         if(home_dir == NULL) return NULL;
         asprintf(&aux, "%s/%s", home_dir, DEFAULT_BASE_FILE);
         base_file_name = aux;
@@ -30,6 +32,7 @@ static FILE * get_base_file(){
 }
 
 static lnode * create_node(char * name, char * path, lnode * next){
+    // little optimization :)
     record rec = {
         .name = strdup(name),
         .path = strdup(path)
@@ -42,7 +45,7 @@ static lnode * create_node(char * name, char * path, lnode * next){
 }
 
 RecordsManager * load_records(){
-    static RecordsManager * manager = NULL; // Am I not over optmizing?
+    static RecordsManager * manager = NULL; // Am I not over optimizing?
 
     if(manager == NULL){
         FILE * storage = get_base_file(); 
