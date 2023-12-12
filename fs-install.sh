@@ -221,7 +221,7 @@ function main(){
 	# change error message and change the plane where you will use the
 		error \
 		"You have to specify at least the base-dir (directory to install the program)" \
-		"usage: [ fs-install.sh <base-dir> <rc-file (optional)> ]"
+		"usage: [ $0 <base-dir> <rc-file (optional)> ]"
 	elif ! [ -d "$FS_BASE_DIR" ] ; then
 		error "no such directory: $FS_BASE_DIR"
 	fi
