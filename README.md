@@ -1,4 +1,4 @@
-# FS-NAVEGATION 
+# FS-NAVIGATION 
 
 I really like to use alias to move between my directory tree, but adding an alias isn't as comfortable as I wanted it to be. So I decided that would allow me to move between my directories fast and in a very confortable way. I also plan to add new functionalities to what a simple alias can do. 
 
@@ -10,7 +10,7 @@ I really like to use alias to move between my directory tree, but adding an alia
 - [ ] think of a new way to store records 
     - Use protocol buffer make a bridge between C and C++ 
 - [ ] Add a recursive set to a folder \<folder\> where it's sub folder are added with names \<folder\>/\<sub-folder\> 
-- [ ] Increase the space locality of fs-navegation 
+- [ ] Increase the space locality of fs-navigation 
 
 
 # IDEAS: 
@@ -88,7 +88,7 @@ You can install by run the following command:
 ```
 sudo ./fs-install.sh /opt
 ```
-This will install fs-navegation in **/opt** folder, more about it below.
+This will install fs-navigation in **/opt** folder, more about it below.
 
 ## Understand install script
 
@@ -96,7 +96,7 @@ The usage of the script is the following:
 ```
 usage: fs-install.sh <base-dir> <rc-file (optional)> "
 ```
-Where **base-dir** is the directory where fs-navegation will be installed (I used /opt but you choose yours). This means will create a folder and inside this one it will have the files fs-navegation needs to run. And **rc-file** is the run command file or profile file of your shell. (eg. if it's bash the rc-file is ~/.bashrc if its zsh it's ~/.zshrc, any other just google c:)
+Where **base-dir** is the directory where fs-navigation will be installed (I used /opt but you choose yours). This means will create a folder and inside this one it will have the files fs-navigation needs to run. And **rc-file** is the run command file or profile file of your shell. (eg. if it's bash the rc-file is ~/.bashrc if its zsh it's ~/.zshrc, any other just google c:)
 
 If you don't specify the rc-file in the end will pop-up this message to you:
 ```
@@ -108,7 +108,7 @@ export FS_EXE=$BASE_DIR/bin/fs-exe
 source $BASE_DIR/script.sh
 ```
 
-You will need to paste the two last lines of it into your rc-file, otherwise fs-navegation won't work.
+You will need to paste the two last lines of it into your rc-file, otherwise fs-navigation won't work.
 
 If we had this already working and the only thing you want to do is to update it. You only need to run:
 ```
