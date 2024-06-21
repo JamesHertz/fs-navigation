@@ -8,15 +8,13 @@ function fs(){
 
     case $1 in
 
-        list|rm|mv|set|help|'')
+        list|rm|mv|set|get|help|'')
             $FS_EXE $@
         ;;
 
         get|*)
-
             local entry=$1 
-            [ "$1" = get ] && entry=$2
-
+            # [ "$1" = get ] && entry=$2
             dir=$($FS_EXE get $entry)
             if [[ "$dir" =~ ^/ ]] ; then
                 # TODO: if path is broken ask to delete
