@@ -28,15 +28,15 @@ const char * rm_find_path(const RecordsManager * m, const char * name);
 // @returns: 0 for ok and something else for error
 int rm_destroy(RecordsManager * m);
 
-inline size_t rm_records_number(const RecordsManager * m){
+static inline size_t rm_records_number(const RecordsManager * m){
     return m->records.length;
 }
 
-#define RM_FOR_EACH_RECORD(m, record_name, body)    do {    \
-        for(int i = 0; i < m->records.length; i++){         \
-            Record record_name = m->records.items[i]; \
-            body                                            \
-        }                                                   \
+#define RM_FOR_EACH_RECORD(m, record_name, body) do {  \
+        for(int i = 0; i < m->records.length; i++){    \
+            Record record_name = m->records.items[i];  \
+            body                                       \
+        }                                              \
     } while(0)
 
 #endif
