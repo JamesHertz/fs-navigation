@@ -5,41 +5,38 @@
 #include <stdio.h>
 
 typedef struct {
-    char * name;
-    char * path;
-} record;
-
-typedef struct _lnode{
-    record record;
-    struct _lnode* next;
-} lnode;
+    const char * name;
+    const char * path;
+} Record;
 
 typedef struct {
-    lnode * head;
-    lnode * tail;
-    size_t size;
-} llist;
-
-typedef struct {
-    llist  records;
-    // struct {
-    //     size_t capacity;
-    //     size_t length;;
-    //     record * items;
-    // } recs;
+    struct {
+        size_t capacity;
+        size_t length;
+        Record * items;
+    } records;
     FILE * storage;
+    bool dirty;
 } RecordsManager;
 
-RecordsManager * load_records();
+// opens file and loads its contents, in case of failure the errno
+// is set appropriately
+RecordsManager * rm_load_records(const char * base_filename);
+const char * rm_put_record(RecordsManager * m, const char * name, const char * path);
+const char * rm_remove_record(RecordsManager * m, const char * name);
+const char * rm_find_path(const RecordsManager * m, const char * name);
+// @returns: 0 for ok and something else for error
+int rm_destroy(RecordsManager * m);
 
-void save_records(const RecordsManager * m);
+inline size_t rm_records_number(const RecordsManager * m){
+    return m->records.length;
+}
 
-record * get_record(const RecordsManager * m, char * name);
-
-char * remove_record(RecordsManager * m, char * name);
-
-char * create_record(RecordsManager * m, char * name, char * path);
-
-void close_storage(const RecordsManager * m);
+#define RM_FOR_EACH_RECORD(m, record_name, body)    do {    \
+        for(int i = 0; i < m->records.length; i++){         \
+            Record record_name = m->records.items[i]; \
+            body                                            \
+        }                                                   \
+    } while(0)
 
 #endif

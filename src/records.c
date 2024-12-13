@@ -1,8 +1,13 @@
 #include <stdlib.h>
-#include <errno.h>
+// #include <errno.h>
 #include <string.h>
 #include <unistd.h>
 #include "records.h"
+#include <assert.h>
+
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 
 #define REC_SEP  "\t"
 #define REC_LINE_FORMAT "%s" REC_SEP "%s\n"
@@ -11,157 +16,195 @@
 #define HOME_DIR "HOME"
 #define BASE_FILE "FS_BASE_FILE"
 
-static FILE * get_base_file(){
-    char * base_file_name = getenv(BASE_FILE);
-    char * aux = NULL;
+#define INITIAL_RECORDS_SIZE 64
+#define TODO()  assert(0 && "TODO")
 
-    if(base_file_name == NULL){
-        char * home_dir = getenv(HOME_DIR);
-        if(home_dir == NULL) return NULL;
-        asprintf(&aux, "%s/%s", home_dir, DEFAULT_BASE_FILE);
-        base_file_name = aux;
+static void * realloc_memory(void * old, size_t size) {
+    void * buffer = realloc(old, size);
+    if(buffer == NULL) {
+        fprintf(stderr, "[ ERROR ] Failed to (re)allocate %zu bytes\n", size);
+        exit(1);
+    }
+    return buffer;
+}
+
+static inline void * alloc_memory(size_t size) {
+    return realloc_memory(NULL, size);
+}
+
+static void rm_append_record(RecordsManager * m, const char * name, const char * path){
+    assert(path && name && "[ ERROR ] Found invalid records");
+
+    if(m->records.length == m->records.capacity) {
+        size_t new_capacity = 2 * m->records.capacity;
+        // TODO: try to understand the misterios error related with `free(buffer)`
+        m->records.items    = realloc_memory(m->records.items, new_capacity * sizeof(RecordsManager));
+        m->records.capacity = new_capacity;
     }
 
-    FILE * file = fopen(base_file_name, "r+");
-    if(file == NULL && errno == ENOENT)
-        file = fopen(base_file_name, "w+"); // create's the file
-                                            //
-    if(aux != NULL) free(aux);
+    const char * rec_name = strdup(name);
+    const char * rec_path = strdup(path);
 
-    return file;
-}
+    assert(rec_path && rec_name);
 
-static lnode * create_node(char * name, char * path, lnode * next){
-    // little optimization :)
-    record rec = {
-        .name = strdup(name),
-        .path = strdup(path)
+    Record rec = {
+        .name = rec_name,
+        .path = rec_path
     };
 
-    lnode * node = malloc(sizeof(lnode));
-    node->record = rec;
-    node->next = next;
-    return node;
+    int idx = m->records.length++;
+    m->records.items[idx] = rec;
 }
 
-RecordsManager * load_records(){
-    static RecordsManager * manager = NULL; // Am I not over optimizing?
+#define NOT_FOUND -1
 
-    if(manager == NULL){
-        FILE * storage = get_base_file(); 
+static ssize_t rm_find_record_index(const RecordsManager * m, const char * name){
+    for(size_t i = 0; i < m->records.capacity; i++){
+        Record * rec = &m->records.items[i];
+        if(strcmp(rec->name, name))
+            return i;
+    }
+    return NOT_FOUND;
+}
 
-        if(storage == NULL) return NULL;
+static Record * rm_find_record_entry(const RecordsManager * m, const char * name){
+    ssize_t idx = rm_find_record_index(m, name);
+    return idx == NOT_FOUND ? NULL : &m->records.items[idx];
+}
 
-        size_t size = 0;
-        lnode dummy = {.next = NULL};
-        lnode * curr = &dummy;
+RecordsManager * rm_load_records(const char * base_filename) {
+    struct stat st;
+    FILE * storage = fopen(base_filename, "r+");
 
-        // uplods the records :)
-        char * line = NULL;
-        size_t line_size = 0;
+    if(storage == NULL || fstat(fileno(storage), &st) != 0) 
+        return NULL;
 
-        while(getline(&line, &line_size, storage) > 0){
-            char * rec_name = strtok(line, REC_SEP);
-            char * rec_path = strtok(NULL, "\n");
-            curr = curr->next = create_node(rec_name, rec_path, NULL);
-            ++size;
+    // create manager
+    RecordsManager * manager = alloc_memory(sizeof(RecordsManager));
+    manager->storage = storage;
+    manager->dirty   = false;
+    manager->records.items    = alloc_memory(sizeof(Record) * INITIAL_RECORDS_SIZE);
+    manager->records.capacity = INITIAL_RECORDS_SIZE;
+    manager->records.length   = 0;
+
+    if(st.st_size > 0){
+        char * buffer = alloc_memory(st.st_size + 1);
+
+        if( fread(buffer, sizeof(char), st.st_size, storage) <= 0 ){
+            free(buffer);
+            rm_destroy(manager);
+            return NULL;
         }
 
-        if(line != NULL) free(line);
+        buffer[st.st_size] = 0;
 
-        manager = malloc(sizeof(RecordsManager));
-        manager->storage = storage;
-        manager->records = (llist) {
-            .head = dummy.next,
-            .tail = (size == 0) ? NULL : curr,
-            .size = size
-        };
+        char * rec_name = strtok(buffer, REC_SEP);
+        char * rec_path = strtok(NULL, "\n");
+
+        // TODO: Think about removing duplicates in case some appear c:
+        rm_append_record(manager, rec_name, rec_path);
+        while((rec_name = strtok(NULL, REC_SEP)) != NULL){
+            rec_path = strtok(NULL, "\n");
+            rm_append_record(manager, rec_name, rec_path);
+        }
+
+        // TODO: think about optimizations of alloc and frees c:
+        free(buffer);
     }
 
     return manager;
 }
 
-void save_records(const RecordsManager *m){
-    FILE * storage = m->storage;
-
-    fseek(storage, 0, SEEK_SET);
-    // fileno(FILE * f) returns the file descriptor of a FILE
-    ftruncate(fileno(storage), 0); // truncates the file
-
-    lnode * curr = m->records.head;
-    while (curr != NULL){
-        record r = curr->record;
-        fprintf(storage, REC_LINE_FORMAT, r.name, r.path);
-        curr = curr->next;
-    }
-    fflush(storage);
+const char * rm_find_path(const RecordsManager * m, const char * name)  {
+    Record * entry = rm_find_record_entry(m, name);
+    return entry == NULL ? NULL : entry->path;
 }
 
-static lnode * get_node(const RecordsManager *m, char * name){
-    lnode * curr = m->records.head;
+const char * rm_put_record(RecordsManager * m, const char * name, const char * path) {
+    m->dirty = true;
 
-    while(curr != NULL){
-        record * rec = &curr->record;
-        if(!strcmp(rec->name, name)) 
-            return curr;
-        curr = curr->next;
-    }
-    return NULL;
-}
-
-record * get_record(const RecordsManager *m, char * name){
-    lnode * node = get_node(m, name);
-    return node == NULL ? NULL : &node->record;
-}
-
-char * create_record(RecordsManager *m, char * name, char * path){
-    record * rec = get_record(m, name);
-    char * old_rec_path = NULL;
-    if(rec == NULL) {
-        llist * list = &m->records;
-        lnode * new_node = create_node(name, path, NULL);
-
-        if(list->size == 0)
-            list->head = new_node;
-        else
-            list->tail->next = new_node;
-
-        list->tail = new_node;
-        list->size += 1;
-    }else{
-        old_rec_path = rec->path;
-        rec->path = strdup(path);
+    Record * entry = rm_find_record_entry(m, name);
+    if(entry == NULL) {
+        rm_append_record(m, name, path);
+        return NULL;
     }
 
-    return old_rec_path;
+    const char * old_path = entry->path;
+    const char * new_path = strdup(path);
+    assert(new_path != NULL);
+    entry->path = new_path;
+    return old_path;
 }
 
-char * remove_record(RecordsManager * m, char * name){
-    lnode ** curr = &m->records.head;
-    lnode * prev = NULL;
+const char * rm_remove_record(RecordsManager * m, const char * name) {
+    ssize_t idx = rm_find_record_index(m, name);
+    if(idx == NOT_FOUND) return NULL;
 
-    while(*curr!= NULL){
-        if(!strcmp((*curr)->record.name, name)){
-            lnode * aux = *curr;
+    m->dirty = true;
+    Record rec = m->records.items[idx];
+    size_t last_idx = m->records.length - 1;
+    if(last_idx >= 0)
+        m->records.items[idx] = m->records.items[last_idx];
 
-            if(aux == m->records.tail) // change tail :)
-                m->records.tail = prev;
+    m->records.length--;
+    free((void *) rec.name);
+    return rec.path;
+}
 
-            // updates the next of the last node
-            *curr = (*curr)->next;
-
-            record rec = aux->record;
-            free(rec.name);
-            free(aux);
-            return rec.path;
+int rm_destroy(RecordsManager * m) {
+    /*
+        if(m->dirty) {
+            // TODO: write to file
         }
-
-        prev = *curr;
-        curr = &(*curr)->next;
-    }
-    return NULL;
-}
-
-void close_storage(const RecordsManager * m){
+    */
     fclose(m->storage);
+    m->storage = NULL;
+
+    // TODO: write to file
+    RM_FOR_EACH_RECORD(m, rec, {
+        free((void *) rec.name);
+        free((void *) rec.path);
+    });
+
+    free(m->records.items);
+    m->records.items = NULL;
+
+    free(m);
+    return 0;
 }
+
+// void save_records(const RecordsManager *m){
+//     FILE * storage = m->storage;
+//
+//     fseek(storage, 0, SEEK_SET);
+//     // fileno(FILE * f) returns the file descriptor of a FILE
+//     ftruncate(fileno(storage), 0); // truncates the file
+//
+//     lnode * curr = m->records.head;
+//     while (curr != NULL){
+//         record r = curr->record;
+//         fprintf(storage, REC_LINE_FORMAT, r.name, r.path);
+//         curr = curr->next;
+//     }
+//     fflush(storage);
+// }
+
+// static FILE * get_base_file(){
+//     char * base_file_name = getenv(BASE_FILE);
+//     char * aux = NULL;
+//
+//     if(base_file_name == NULL){
+//         char * home_dir = getenv(HOME_DIR);
+//         if(home_dir == NULL) return NULL;
+//         asprintf(&aux, "%s/%s", home_dir, DEFAULT_BASE_FILE);
+//         base_file_name = aux;
+//     }
+//
+//     FILE * file = fopen(base_file_name, "r+");
+//     if(file == NULL && errno == ENOENT)
+//         file = fopen(base_file_name, "w+"); // create's the file
+//                                             //
+//     if(aux != NULL) free(aux);
+//
+//     return file;
+// }
