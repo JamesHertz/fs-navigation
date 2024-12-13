@@ -59,9 +59,9 @@ static void rm_append_record(RecordsManager * m, const char * name, const char *
 #define NOT_FOUND -1
 
 static ssize_t rm_find_record_index(const RecordsManager * m, const char * name){
-    for(size_t i = 0; i < m->records.capacity; i++){
+    for(size_t i = 0; i < m->records.length; i++){
         Record * rec = &m->records.items[i];
-        if(strcmp(rec->name, name))
+        if(strcmp(rec->name, name) == 0)
             return i;
     }
     return NOT_FOUND;
@@ -74,10 +74,13 @@ static Record * rm_find_record_entry(const RecordsManager * m, const char * name
 
 RecordsManager * rm_load_records(const char * base_filename) {
     struct stat st;
-    FILE * storage = fopen(base_filename, "r+");
+    int fd = open(base_filename, O_RDWR | O_CREAT, 0666);
 
-    if(storage == NULL || fstat(fileno(storage), &st) != 0) 
+    if(fd < 0 || fstat(fd, &st) != 0) 
         return NULL;
+
+    FILE * storage = fdopen(fd, "a+");
+    assert(storage != NULL);
 
     // create manager
     RecordsManager * manager = alloc_memory(sizeof(RecordsManager));
@@ -120,7 +123,8 @@ const char * rm_find_path(const RecordsManager * m, const char * name)  {
     return entry == NULL ? NULL : entry->path;
 }
 
-const char * rm_put_record(RecordsManager * m, const char * name, const char * path) {
+char * rm_put_record(RecordsManager * m, const char * name, const char * path) {
+    // TODO: think about optimizations when name == path
     m->dirty = true;
 
     Record * entry = rm_find_record_entry(m, name);
@@ -133,30 +137,38 @@ const char * rm_put_record(RecordsManager * m, const char * name, const char * p
     const char * new_path = strdup(path);
     assert(new_path != NULL);
     entry->path = new_path;
-    return old_path;
+    return (char *) old_path;
 }
 
-const char * rm_remove_record(RecordsManager * m, const char * name) {
+char * rm_remove_record(RecordsManager * m, const char * name) {
     ssize_t idx = rm_find_record_index(m, name);
     if(idx == NOT_FOUND) return NULL;
 
     m->dirty = true;
+
     Record rec = m->records.items[idx];
     size_t last_idx = m->records.length - 1;
-    if(last_idx >= 0)
-        m->records.items[idx] = m->records.items[last_idx];
+    if(last_idx >= 0) {
+        m->records.items[idx]      = m->records.items[last_idx];
+        m->records.items[last_idx] = (Record) {0};
+    }
 
     m->records.length--;
     free((void *) rec.name);
-    return rec.path;
+    return (char *) rec.path;
 }
 
 int rm_destroy(RecordsManager * m) {
-    /*
-        if(m->dirty) {
-            // TODO: write to file
-        }
-    */
+    if(m->dirty) {
+        fseek(m->storage, 0, SEEK_SET);
+        ftruncate(fileno(m->storage), 0); // truncates the file
+
+        RM_FOR_EACH_RECORD(m, rec, {
+            fprintf(m->storage, REC_LINE_FORMAT, rec.name, rec.path);
+        });
+        fflush(m->storage);
+    }
+
     fclose(m->storage);
     m->storage = NULL;
 

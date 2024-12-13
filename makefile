@@ -36,7 +36,7 @@ $(BIN_DIR):
 	mkdir -p $@
 
 test: $(TEST_EXE)
-	$(TEST_EXE)
+	$(TEST_EXE) --verbose=0
 
 install: $(EXE) $(FS_SCRIPT_FILE)
 	@echo $(FS_SCRIPT_FILE)
