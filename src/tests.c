@@ -183,7 +183,7 @@ Test(basic, serialization, .fini = free_resources){
         cr_assert_str_eq(rm_find_path(rm, examples[i].name), examples[i].path);
 
     // NOTE: Remove 3 records write, read and see it has the changes
-    static_assert(EXAMPLES_NR > 3);
+    static_assert(EXAMPLES_NR > 3, "");
     for(size_t i = 0; i < 3; i++) {
         char * path = rm_remove_record(rm, examples[i].name);
         cr_assert_not_null(path);
@@ -211,7 +211,7 @@ Test(basic, serialization, .fini = free_resources){
     rm = create_rm(filename);
     cr_assert_int_eq(rm_records_number(rm), EXAMPLES_NR - 3);
 
-    static_assert(EXAMPLES_NR > 4);
+    static_assert(EXAMPLES_NR > 4, "");
 
     cr_assert_str_eq(rm_find_path(rm, examples[3].name), "/some/random/path");
     for(size_t i = 0; i < EXAMPLES_NR - 4; i++) {

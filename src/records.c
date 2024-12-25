@@ -12,17 +12,13 @@
 #define REC_SEP  "\t"
 #define REC_LINE_FORMAT "%s" REC_SEP "%s\n"
 
-#define DEFAULT_BASE_FILE ".fs-nav"
 #define HOME_DIR "HOME"
-#define BASE_FILE "FS_BASE_FILE"
-
 #define INITIAL_RECORDS_SIZE 64
-#define TODO()  assert(0 && "TODO")
 
 static void * realloc_memory(void * old, size_t size) {
     void * buffer = realloc(old, size);
     if(buffer == NULL) {
-        fprintf(stderr, "[ ERROR ] Failed to (re)allocate %zu bytes\n", size);
+        fprintf(stderr, "[ ERROR ] Failed to (re)allocate %zu bytes (You probably ran out of memory)!\n", size);
         exit(1);
     }
     return buffer;
@@ -70,6 +66,17 @@ static ssize_t rm_find_record_index(const RecordsManager * m, const char * name)
 static Record * rm_find_record_entry(const RecordsManager * m, const char * name){
     ssize_t idx = rm_find_record_index(m, name);
     return idx == NOT_FOUND ? NULL : &m->records.items[idx];
+}
+
+char * resolve_base_filename() {
+    char * filename = getenv(BASE_FILE_ENV_VAR);
+    if(filename == NULL) {
+        char * home_dir = getenv(HOME_DIR);
+        assert(home_dir != NULL && "'HOME' env var no defined");
+        asprintf(&filename, "%s/%s", home_dir, DEFAULT_BASE_FILE);
+        return filename;
+    }
+    return strdup(filename);
 }
 
 RecordsManager * rm_load_records(const char * base_filename) {
@@ -184,39 +191,3 @@ int rm_destroy(RecordsManager * m) {
     free(m);
     return 0;
 }
-
-// void save_records(const RecordsManager *m){
-//     FILE * storage = m->storage;
-//
-//     fseek(storage, 0, SEEK_SET);
-//     // fileno(FILE * f) returns the file descriptor of a FILE
-//     ftruncate(fileno(storage), 0); // truncates the file
-//
-//     lnode * curr = m->records.head;
-//     while (curr != NULL){
-//         record r = curr->record;
-//         fprintf(storage, REC_LINE_FORMAT, r.name, r.path);
-//         curr = curr->next;
-//     }
-//     fflush(storage);
-// }
-
-// static FILE * get_base_file(){
-//     char * base_file_name = getenv(BASE_FILE);
-//     char * aux = NULL;
-//
-//     if(base_file_name == NULL){
-//         char * home_dir = getenv(HOME_DIR);
-//         if(home_dir == NULL) return NULL;
-//         asprintf(&aux, "%s/%s", home_dir, DEFAULT_BASE_FILE);
-//         base_file_name = aux;
-//     }
-//
-//     FILE * file = fopen(base_file_name, "r+");
-//     if(file == NULL && errno == ENOENT)
-//         file = fopen(base_file_name, "w+"); // create's the file
-//                                             //
-//     if(aux != NULL) free(aux);
-//
-//     return file;
-// }
